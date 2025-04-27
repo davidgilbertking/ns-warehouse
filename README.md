@@ -39,11 +39,11 @@ php artisan key:generate
 5. Настроить `.env` (подключить базу данных)
 
 ```plaintext
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=ns_warehouse
-DB_USERNAME=root
+DB_PORT=5432
+DB_DATABASE=warehouse_db
+DB_USERNAME=david
 DB_PASSWORD=
 ```
 
