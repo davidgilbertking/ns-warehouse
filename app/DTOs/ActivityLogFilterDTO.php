@@ -26,15 +26,6 @@ final readonly class ActivityLogFilterDTO
         $this->date = $date;
     }
 
-    /**
-     * @param array{
-     *     user?: string,
-     *     action?: string,
-     *     entity_type?: string,
-     *     description?: string,
-     *     date?: string
-     * } $data
-     */
     public static function fromArray(array $data): self
     {
         return new self(
