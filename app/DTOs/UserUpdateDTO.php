@@ -12,14 +12,6 @@ readonly class UserUpdateDTO
         private ?string $password = null,
     ) {}
 
-    /**
-     * @param array{
-     *     email: string,
-     *     role: string,
-     *     password?: string|null
-     * } $data
-     * @return self
-     */
     public static function fromArray(array $data): self
     {
         return new self(
