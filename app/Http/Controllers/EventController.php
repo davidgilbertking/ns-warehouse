@@ -13,6 +13,7 @@ use App\DTOs\EventStoreDTO;
 use App\DTOs\EventUpdateDTO;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use App\DTOs\EventCreateInputDTO;
 
 class EventController extends Controller
 {
@@ -32,7 +33,9 @@ class EventController extends Controller
 
     public function create(Request $request)
     {
-        $data = $this->eventService->getCreateData($request->input('product_id'));
+        $dto = EventCreateInputDTO::fromArray($request->all());
+
+        $data = $this->eventService->getCreateData($dto);
 
         return view('events.create', $data);
     }

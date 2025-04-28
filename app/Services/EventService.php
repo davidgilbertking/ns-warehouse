@@ -12,6 +12,7 @@ use App\Repositories\ItemRepository;
 use App\DTOs\EventStoreDTO;
 use App\DTOs\EventUpdateDTO;
 use App\Models\ActivityLog;
+use App\DTOs\EventCreateInputDTO;
 
 class EventService
 {
@@ -28,7 +29,7 @@ class EventService
         return $this->eventRepository->getFilteredEvents($filters);
     }
 
-    public function getCreateData(?int $productId = null): array
+    public function getCreateData(EventCreateInputDTO $dto): array
     {
         $items    = $this->itemRepository->allWithQuantities();
         $products = $this->productRepository->all();
@@ -43,8 +44,8 @@ class EventService
 
         $preselectedItems = [];
 
-        if ($productId) {
-            $product = $this->productRepository->findWithItems($productId);
+        if ($dto->productId !== null) {
+            $product = $this->productRepository->findWithItems($dto->productId);
 
             if ($product) {
                 foreach ($product->items as $item) {
@@ -93,7 +94,7 @@ class EventService
 
     public function getCloneData(Event $event): array
     {
-        $data = $this->getCreateData();
+        $data = $this->getCreateData(new EventCreateInputDTO());
 
         $defaultName      = $event->name . ' (копия)';
         $preselectedItems = [];
