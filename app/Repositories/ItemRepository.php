@@ -38,7 +38,6 @@ class ItemRepository
         return $this->buildQueryWithFilters($filter)->get();
     }
 
-
     private function buildQueryWithFilters(ItemFilterDTO $filter): \Illuminate\Database\Eloquent\Builder
     {
         $query = Item::with(['products', 'reservations.event']);
@@ -54,5 +53,44 @@ class ItemRepository
         }
 
         return $query;
+    }
+
+    public function allWithQuantities(): Collection
+    {
+        return Item::select('id', 'name', 'quantity')->get();
+    }
+
+    public function findWithRelations(int $id): ?Item
+    {
+        return Item::with(['products', 'reservations.event'])->find($id);
+    }
+
+    public function getAvailableQuantityForItem(int  $itemId, string $startDate, string $endDate,
+                                                ?int $excludeEventId = null
+    ): int {
+        $item = Item::find($itemId);
+
+        if (!$item) {
+            return 0;
+        }
+
+        $reserved = $item->reservations()
+                         ->whereHas('event', function ($query) use ($startDate, $endDate, $excludeEventId) {
+                             $query->where(function ($q) use ($startDate, $endDate) {
+                                 $q->whereBetween('start_date', [$startDate, $endDate])
+                                   ->orWhereBetween('end_date', [$startDate, $endDate])
+                                   ->orWhere(function ($q2) use ($startDate, $endDate) {
+                                       $q2->where('start_date', '<=', $startDate)
+                                          ->where('end_date', '>=', $endDate);
+                                   });
+                             });
+
+                             if ($excludeEventId) {
+                                 $query->where('id', '!=', $excludeEventId);
+                             }
+                         })
+                         ->sum('quantity');
+
+        return max(0, $item->quantity - $reserved);
     }
 }
