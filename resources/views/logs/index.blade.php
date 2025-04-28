@@ -44,7 +44,7 @@
                     <th>Действие</th>
                     <th>Объект</th>
                     <th>Описание</th>
-                    <th>Дата и время</th>
+                    <th>Дата и время (МСК)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -54,7 +54,7 @@
                         <td>{{ $log->action }}</td>
                         <td>{{ $log->entity_type }} #{{ $log->entity_id }}</td>
                         <td>{{ $log->description }}</td>
-                        <td>{{ $log->created_at->format('d.m.Y H:i') }}</td>
+                        <td>{{ $log->created_at->timezone('Europe/Moscow')->format('d.m.Y H:i') }}</td>
                     </tr>
                 @endforeach
                 </tbody>
