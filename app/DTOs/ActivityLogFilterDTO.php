@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\DTOs;
 
-class ActivityLogFilterDTO
+final readonly class ActivityLogFilterDTO
 {
-    private readonly ?string $user;
-    private readonly ?string $action;
-    private readonly ?string $entityType;
-    private readonly ?string $description;
-    private readonly ?string $date;
+    private ?string $user;
+    private ?string $action;
+    private ?string $entityType;
+    private ?string $description;
+    private ?string $date;
 
     public function __construct(
         ?string $user = null,
@@ -26,6 +26,15 @@ class ActivityLogFilterDTO
         $this->date = $date;
     }
 
+    /**
+     * @param array{
+     *     user?: string,
+     *     action?: string,
+     *     entity_type?: string,
+     *     description?: string,
+     *     date?: string
+     * } $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
