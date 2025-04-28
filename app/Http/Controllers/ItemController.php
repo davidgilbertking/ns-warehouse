@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Services\ItemImageService;
 use App\Services\ItemService;
 use App\Http\Requests\ItemStoreRequest;
 use App\Http\Requests\ItemUpdateRequest;
@@ -12,12 +13,24 @@ use App\DTOs\ItemStoreDTO;
 use App\DTOs\ItemUpdateDTO;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use App\Services\ItemExportService;
 
 class ItemController extends Controller
 {
+    protected ItemService $service;
+    protected ItemExportService $exportService;
+    protected ItemImageService $imageService;
+
     public function __construct(
-        protected ItemService $service
-    ) {}
+        ItemService $service,
+        ItemExportService $exportService,
+        ItemImageService $imageService
+    ) {
+        $this->service = $service;
+        $this->exportService = $exportService;
+        $this->imageService = $imageService;
+    }
+
 
     public function index(Request $request)
     {
@@ -39,6 +52,10 @@ class ItemController extends Controller
 
         $dto = ItemStoreDTO::fromArray($request->validated());
         $item = $this->service->createItem($dto);
+
+        if ($request->hasFile('images')) {
+            $this->imageService->uploadImages($item, $request->file('images'));
+        }
 
         return redirect()->route('items.index')->with('success', 'Предмет создан!');
     }
@@ -84,5 +101,18 @@ class ItemController extends Controller
         if (auth()->user()->isViewer()) {
             abort(403, 'Нет прав для этого действия.');
         }
+    }
+
+    public function export(Request $request)
+    {
+        $filter = ItemFilterDTO::fromArray($request->all());
+
+        $csvContent = $this->exportService->export($filter);
+
+        $filename = 'items_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', "attachment; filename={$filename}");
     }
 }

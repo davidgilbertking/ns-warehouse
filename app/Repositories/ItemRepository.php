@@ -15,19 +15,7 @@ class ItemRepository
 {
     public function paginateWithFilters(ItemFilterDTO $filter, int $perPage = 10): LengthAwarePaginator
     {
-        $query = Item::with(['products', 'reservations.event']);
-
-        if ($filter->getSearch()) {
-            $search = strtolower($filter->getSearch());
-            $query->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('LOWER(description) LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('LOWER(size) LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('LOWER(material) LIKE ?', ['%' . $search . '%']);
-            });
-        }
-
-        return $query->paginate($perPage);
+        return $this->buildQueryWithFilters($filter)->paginate($perPage);
     }
 
     public function create(ItemStoreDTO $data): Item
@@ -45,8 +33,26 @@ class ItemRepository
         return $item->delete();
     }
 
-    public function allForExport(): Collection
+    public function getForExport(ItemFilterDTO $filter): Collection
     {
-        return Item::all();
+        return $this->buildQueryWithFilters($filter)->get();
+    }
+
+
+    private function buildQueryWithFilters(ItemFilterDTO $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = Item::with(['products', 'reservations.event']);
+
+        if ($filter->getSearch()) {
+            $search = strtolower($filter->getSearch());
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(size) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(material) LIKE ?', ['%' . $search . '%']);
+            });
+        }
+
+        return $query;
     }
 }
