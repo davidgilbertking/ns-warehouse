@@ -60,7 +60,7 @@
                 <tr>
                     <th>Название</th>
                     <th>Даты</th>
-                    @if (auth()->user() && auth()->user()->role === 'admin')
+                    @if (auth()->user() && auth()->user()->isAdmin())
                         <th>Действия</th>
                     @endif
                 </tr>

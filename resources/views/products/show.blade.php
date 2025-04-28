@@ -6,9 +6,9 @@
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-    @if(auth()->user()->role !== 'viewer')
+    @if(!auth()->user()->isViewer())
         <div class="d-flex gap-2 mb-4">
-            @if(auth()->user()->role === 'admin')
+            @if(auth()->user()->isAdmin())
                 <a href="{{ route('products.edit', $product) }}" class="btn btn-warning">Редактировать продукт</a>
             @endif
             <a href="{{ route('events.create', ['product_id' => $product->id]) }}" class="btn btn-primary">Создать

@@ -42,7 +42,7 @@
                 </li>
 
                 @auth
-                    @if (auth()->user()->role === 'admin')
+                    @if (auth()->user()->isAdmin())
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                                 Пользователи

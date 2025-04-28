@@ -28,9 +28,9 @@
                 <div class="mb-3">
                     <label class="form-label">Роль</label>
                     <select name="role" class="form-select" required>
-                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Администратор</option>
-                        <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>Пользователь</option>
-                        <option value="viewer" {{ $user->role === 'viewer' ? 'selected' : '' }}>Наблюдатель</option>
+                        <option value="admin" {{ $user->isAdmin() ? 'selected' : '' }}>Администратор</option>
+                        <option value="user" {{ $user->isUser() ? 'selected' : '' }}>Пользователь</option>
+                        <option value="viewer" {{ $user->isViewer() ? 'selected' : '' }}>Наблюдатель</option>
                     </select>
                 </div>
 
