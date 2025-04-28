@@ -1,41 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\ActivityLog;
-use Illuminate\Http\Request;
+use App\Services\ActivityLogService;
+use App\Http\Requests\ActivityLogRequest;
+use App\DTOs\ActivityLogFilterDTO;
 
 class ActivityLogController extends Controller
 {
-    public function index(Request $request)
+    protected ActivityLogService $service;
+
+    public function __construct(ActivityLogService $service)
     {
-        $query = ActivityLog::with('user')->orderBy('created_at', 'desc');
+        $this->service = $service;
+    }
 
-        if ($request->filled('user')) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('name', 'ILIKE', '%' . $request->user . '%');
-            });
-        }
+    public function index(ActivityLogRequest $request)
+    {
+        $filterDTO = ActivityLogFilterDTO::fromArray($request->validated());
 
-        if ($request->filled('action')) {
-            $query->where('action', 'ILIKE', '%' . $request->action . '%');
-        }
-
-        if ($request->filled('entity_type')) {
-            $query->where('entity_type', 'ILIKE', '%' . $request->entity_type . '%');
-        }
-
-        if ($request->filled('description')) {
-            $query->where('description', 'ILIKE', '%' . $request->description . '%');
-        }
-
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
-        }
-
-        $logs = $query->paginate(15)->appends($request->query());
+        $logs = $this->service->getLogs($filterDTO)->appends($request->query());
 
         return view('logs.index', compact('logs'));
     }
-
 }
