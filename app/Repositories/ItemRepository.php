@@ -65,8 +65,9 @@ class ItemRepository
         return Item::with(['products', 'reservations.event'])->find($id);
     }
 
-    public function getAvailableQuantityForItem(int  $itemId, string $startDate, string $endDate,
-                                                ?int $excludeEventId = null
+    public function getAvailableQuantityForItem(
+        int  $itemId, string $startDate, string $endDate,
+        ?int $excludeEventId = null
     ): int {
         $item = Item::find($itemId);
 
@@ -92,5 +93,10 @@ class ItemRepository
                          ->sum('quantity');
 
         return max(0, $item->quantity - $reserved);
+    }
+
+    public function all(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Item::all();
     }
 }

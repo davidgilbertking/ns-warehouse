@@ -1,57 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
+use App\Services\ProductService;
+use App\Services\ProductExportService;
+use App\DTOs\ProductStoreDTO;
+use App\DTOs\ProductUpdateDTO;
 use App\Models\Product;
-use App\Models\Item;
-use App\Models\ActivityLog;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProductController extends Controller
 {
-    use AuthorizesRequests;
+    public function __construct(
+        protected ProductService       $service,
+        protected ProductExportService $exportService,
+    ) {
+    }
 
     public function index()
     {
-        $products = Product::withCount('items')->paginate(10);
+        $products = $this->service->getPaginatedProducts();
+
         return view('products.index', compact('products'));
     }
 
     public function create()
     {
-        $items = Item::all();
-        return view('products.create', compact('items'));
+        $data = $this->service->getCreateData();
+
+        return view('products.create', $data);
     }
 
-    public function store(Request $request)
+    public function store(ProductStoreRequest $request)
     {
-        $validated = $request->validate([
-                                            'name' => 'required|string|max:255',
-                                            'items' => 'nullable|array',
-                                            'items.*.id' => 'exists:items,id',
-                                            'items.*.quantity' => 'integer|min:1',
-                                        ]);
+        $dto = ProductStoreDTO::fromArray($request->validated());
 
-        $product = Product::create([
-                                       'name' => $validated['name'],
-                                   ]);
-
-        if (!empty($validated['items'])) {
-            $product->items()->attach(
-                collect($validated['items'])->mapWithKeys(function ($item) {
-                    return [$item['id'] => ['quantity' => $item['quantity']]];
-                })->toArray()
-            );
-        }
-
-        ActivityLog::create([
-                                'user_id' => auth()->id(),
-                                'action' => 'created_product',
-                                'entity_type' => 'Product',
-                                'entity_id' => $product->id,
-                                'description' => "Создан продукт: {$product->name}",
-                            ]);
+        $this->service->createProduct($dto);
 
         return redirect()->route('products.index')->with('success', 'Продукт создан!');
     }
@@ -59,104 +47,57 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load('items');
-        $allItems = Item::all();
+        $allItems = $this->service->getCreateData()['items'];
+
         return view('products.show', compact('product', 'allItems'));
     }
 
     public function edit(Product $product)
     {
-        $items = Item::all();
+        $data = $this->service->getCreateData();
+
         $selectedItems = $product->items->map(function ($item) {
             return [
-                'id' => $item->id,
+                'id'       => $item->id,
                 'quantity' => $item->pivot->quantity,
             ];
         });
-        return view('products.edit', compact('product', 'items', 'selectedItems'));
+
+        return view(
+            'products.edit', array_merge(
+            $data,
+            compact('product', 'selectedItems')
+        )
+        );
     }
 
-    public function update(Request $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product)
     {
-        $validated = $request->validate([
-                                            'name' => 'required|string|max:255',
-                                            'items' => 'nullable|array',
-                                            'items.*.id' => 'exists:items,id',
-                                            'items.*.quantity' => 'integer|min:1',
-                                        ]);
+        $dto = ProductUpdateDTO::fromArray($request->validated());
 
-        $product->update([
-                             'name' => $validated['name'],
-                         ]);
-
-        $product->items()->detach();
-
-        if (!empty($validated['items'])) {
-            $product->items()->attach(
-                collect($validated['items'])->mapWithKeys(function ($item) {
-                    return [$item['id'] => ['quantity' => $item['quantity']]];
-                })->toArray()
-            );
-        }
-
-        ActivityLog::create([
-                                'user_id' => auth()->id(),
-                                'action' => 'updated_product',
-                                'entity_type' => 'Product',
-                                'entity_id' => $product->id,
-                                'description' => "Изменен продукт: {$product->name}",
-                            ]);
+        $this->service->updateProduct($product, $dto);
 
         return redirect()->route('products.show', $product)->with('success', 'Продукт обновлён!');
     }
 
     public function destroy(Product $product)
     {
-        $product->delete();
-
-        ActivityLog::create([
-                                'user_id' => auth()->id(),
-                                'action' => 'deleted_product',
-                                'entity_type' => 'Product',
-                                'entity_id' => $product->id,
-                                'description' => "Удален продукт: {$product->name}",
-                            ]);
+        $this->service->deleteProduct($product);
 
         return redirect()->route('products.index')->with('success', 'Продукт удалён!');
     }
 
     public function export(Product $product)
     {
-        $filename = 'product_' . $product->id . '_items.csv';
-
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        $callback = function () use ($product) {
-            $handle = fopen('php://output', 'w');
-
-            fputcsv($handle, ['Название предмета', 'Количество в продукте']);
-
-            foreach ($product->items as $item) {
-                fputcsv($handle, [
-                    $item->name,
-                    $item->pivot->quantity,
-                ]);
-            }
-
-            fclose($handle);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return $this->exportService->export($product);
     }
 
     public function items(Product $product)
     {
         $items = $product->items->map(function ($item) {
             return [
-                'id' => $item->id,
-                'name' => $item->name,
+                'id'       => $item->id,
+                'name'     => $item->name,
                 'quantity' => $item->pivot->quantity,
             ];
         });
