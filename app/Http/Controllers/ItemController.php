@@ -132,7 +132,7 @@ class ItemController extends Controller
 
     private function authorizeAction()
     {
-        if (auth()->user()->role === 'viewer') {
+        if (auth()->user()->isViewer()) {
             abort(403, 'Нет прав для этого действия.');
         }
     }

@@ -3,7 +3,7 @@
 @section('content')
     <h1>{{ $event->name }}</h1>
 
-    @if(auth()->user()->role !== 'viewer')
+    @if(!auth()->user()->isViewer())
         <div class="d-flex gap-2 mb-4">
             <a href="{{ route('events.edit', $event) }}" class="btn btn-warning">Редактировать мероприятие</a>
             <a href="{{ route('events.clone', $event) }}" class="btn btn-light">Клонировать мероприятие</a>

@@ -66,7 +66,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->role === 'admin') {
+        if ($user->isAdmin()) {
             return redirect()->route('admin.users.index')->with('error', 'Нельзя удалить другого администратора!');
         }
 

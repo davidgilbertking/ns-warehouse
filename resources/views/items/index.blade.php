@@ -60,7 +60,7 @@
                     @if (request()->filled('available_from') && request()->filled('available_to'))
                         <th>Количество доступно</th>
                     @endif
-                    @if (auth()->user() && auth()->user()->role === 'admin')
+                    @if (auth()->user() && auth()->user()->isAdmin())
                         <th>Действия</th>
                     @endif
                 </tr>

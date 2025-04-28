@@ -38,7 +38,7 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 
     /**
@@ -46,7 +46,7 @@ class EventPolicy
      */
     public function delete(User $user, Event $event): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 
     /**

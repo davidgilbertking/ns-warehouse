@@ -8,11 +8,11 @@ class UserPolicy
 {
     public function delete(User $authUser, User $user)
     {
-        return $authUser->role === 'admin' && $user->role !== 'admin';
+        return $authUser->isAdmin() && !$user->isAdmin();
     }
 
     public function create(User $user)
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 }

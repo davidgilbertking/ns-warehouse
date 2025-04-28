@@ -29,7 +29,7 @@ class ItemPolicy
      */
     public function create(User $user)
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 
 
@@ -38,7 +38,7 @@ class ItemPolicy
      */
     public function update(User $user, Item $item): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 
     /**
@@ -46,7 +46,7 @@ class ItemPolicy
      */
     public function delete(User $user, Item $item): bool
     {
-        return $user->role === 'admin';
+        return $user->isAdmin();
     }
 
     /**
