@@ -13,15 +13,6 @@ readonly class UserStoreDTO
         private string $role,
     ) {}
 
-    /**
-     * @param array{
-     *     name: string,
-     *     email: string,
-     *     password: string,
-     *     role: string
-     * } $data
-     * @return self
-     */
     public static function fromArray(array $data): self
     {
         return new self(
