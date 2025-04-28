@@ -5,7 +5,7 @@
 
     @if ($errors->any())
         <div class="alert alert-danger">
-            <ul>
+            <ul class="mb-0">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -19,49 +19,48 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label class="form-label">Название</label>
-                    <input type="text" name="name" class="form-control" required>
+                    <label for="name" class="form-label">Название</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Описание</label>
-                    <textarea name="description" class="form-control" rows="3"></textarea>
+                    <label for="description" class="form-label">Описание</label>
+                    <textarea id="description" name="description" class="form-control" rows="3"></textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Размер</label>
-                    <input type="text" name="size" class="form-control">
+                    <label for="size" class="form-label">Размер</label>
+                    <input type="text" id="size" name="size" class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Материал</label>
-                    <input type="text" name="material" class="form-control">
+                    <label for="material" class="form-label">Материал</label>
+                    <input type="text" id="material" name="material" class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Подрядчик / Магазин</label>
-                    <input type="text" name="supplier" class="form-control">
+                    <label for="supplier" class="form-label">Подрядчик / Магазин</label>
+                    <input type="text" id="supplier" name="supplier" class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Место хранения</label>
-                    <input type="text" name="storage_location" class="form-control">
+                    <label for="storage_location" class="form-label">Место хранения</label>
+                    <input type="text" id="storage_location" name="storage_location" class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Количество</label>
-                    <input type="number" name="quantity" class="form-control" min="0" value="1" required>
+                    <label for="quantity" class="form-label">Количество</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" min="0" value="1" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Фотографии</label>
-                    <input type="file" name="images[]" class="form-control" multiple>
+                    <label for="images" class="form-label">Фотографии</label>
+                    <input type="file" id="images" name="images[]" class="form-control" multiple>
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-3">Создать предмет</button>
+                <a href="{{ route('items.index') }}" class="btn btn-secondary mt-3 ms-2">Назад</a>
             </form>
         </div>
     </div>
-
-    <a href="{{ route('items.index') }}" class="btn btn-secondary mt-3">Назад</a>
 @endsection
