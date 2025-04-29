@@ -13,6 +13,7 @@ use App\DTOs\EventStoreDTO;
 use App\DTOs\EventUpdateDTO;
 use App\Models\ActivityLog;
 use App\DTOs\EventCreateInputDTO;
+use Illuminate\Validation\ValidationException;
 
 class EventService
 {
@@ -115,12 +116,14 @@ class EventService
 
     public function createEvent(EventStoreDTO $dto): Event
     {
+        if (!empty($dto->items)) {
+            $this->ensureItemsAreAvailable($dto->items, $dto->startDate, $dto->endDate);
+        }
+
         $event = $this->eventRepository->create($dto);
 
-        if (!empty($dto->items)) {
-            foreach ($dto->items as $item) {
-                $this->reservationRepository->createReservation($event, (int)$item['id'], (int)$item['quantity']);
-            }
+        foreach ($dto->items ?? [] as $item) {
+            $this->reservationRepository->createReservation($event, (int)$item['id'], (int)$item['quantity']);
         }
 
         $this->logAction('created_event', $event);
@@ -130,14 +133,15 @@ class EventService
 
     public function updateEvent(Event $event, EventUpdateDTO $dto): void
     {
-        $this->eventRepository->update($event, $dto);
+        if (!empty($dto->items)) {
+            $this->ensureItemsAreAvailable($dto->items, $dto->startDate, $dto->endDate, $event->id);
+        }
 
+        $this->eventRepository->update($event, $dto);
         $this->reservationRepository->deleteAllByEvent($event);
 
-        if (!empty($dto->items)) {
-            foreach ($dto->items as $item) {
-                $this->reservationRepository->createReservation($event, (int)$item['id'], (int)$item['quantity']);
-            }
+        foreach ($dto->items ?? [] as $item) {
+            $this->reservationRepository->createReservation($event, (int)$item['id'], (int)$item['quantity']);
         }
 
         $this->logAction('updated_event', $event);
@@ -160,6 +164,25 @@ class EventService
                                     'entity_id'   => $event->id,
                                     'description' => ucfirst(str_replace('_', ' ', $action)) . ": {$event->name}",
                                 ]);
+        }
+    }
+
+    private function ensureItemsAreAvailable(
+        array $items, string $startDate, string $endDate, ?int $excludeEventId = null
+    ): void {
+        foreach ($items as $item) {
+            $itemId       = (int)$item['id'];
+            $requestedQty = (int)$item['quantity'];
+
+            $available =
+                $this->itemRepository->getAvailableQuantityForItem($itemId, $startDate, $endDate, $excludeEventId);
+
+            if ($requestedQty > $available) {
+                $name = optional($this->itemRepository->find($itemId))->name ?? "ID $itemId";
+                throw ValidationException::withMessages([
+                                                            'items' => "Недостаточно доступных единиц для предмета \"{$name}\" (доступно: {$available})",
+                                                        ]);
+            }
         }
     }
 }

@@ -15,25 +15,30 @@ use App\DTOs\EventStoreDTO;
 use App\DTOs\EventUpdateDTO;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use App\Models\Item;
 
 class EventServiceTest extends TestCase
 {
     use RefreshDatabase;
 
     protected EventRepository $eventRepository;
+
     protected ReservationRepository $reservationRepository;
+
     protected ProductRepository $productRepository;
+
     protected ItemRepository $itemRepository;
+
     protected EventService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->eventRepository = Mockery::mock(EventRepository::class);
+        $this->eventRepository       = Mockery::mock(EventRepository::class);
         $this->reservationRepository = Mockery::mock(ReservationRepository::class);
-        $this->productRepository = Mockery::mock(ProductRepository::class);
-        $this->itemRepository = Mockery::mock(ItemRepository::class);
+        $this->productRepository     = Mockery::mock(ProductRepository::class);
+        $this->itemRepository        = Mockery::mock(ItemRepository::class);
 
         $this->service = new EventService(
             $this->eventRepository,
@@ -46,9 +51,9 @@ class EventServiceTest extends TestCase
     public function testCreateEventSuccessfully(): void
     {
         $dto = new EventStoreDTO(
-            name: 'Test Event',
+            name:      'Test Event',
             startDate: now()->format('Y-m-d H:i:s'),
-            endDate: now()->addDays(2)->format('Y-m-d H:i:s')
+            endDate:   now()->addDays(2)->format('Y-m-d H:i:s')
         );
 
         $event = Event::factory()->make();
@@ -71,9 +76,9 @@ class EventServiceTest extends TestCase
         $event = Event::factory()->create();
 
         $dto = new EventUpdateDTO(
-            name: 'Updated Event',
+            name:      'Updated Event',
             startDate: now()->format('Y-m-d H:i:s'),
-            endDate: now()->addDays(3)->format('Y-m-d H:i:s')
+            endDate:   now()->addDays(3)->format('Y-m-d H:i:s')
         );
 
         $this->eventRepository->shouldReceive('update')
@@ -125,5 +130,61 @@ class EventServiceTest extends TestCase
     {
         Mockery::close();
         parent::tearDown();
+    }
+
+    public function testCreateEventFailsWhenItemUnavailable(): void
+    {
+        $dto = new EventStoreDTO(
+            name:      'Unavailable Event',
+            startDate: now()->format('Y-m-d H:i:s'),
+            endDate:   now()->addDays(2)->format('Y-m-d H:i:s'),
+            items:     [
+                           ['id' => 1, 'quantity' => 10],
+                       ],
+        );
+
+        $this->itemRepository->shouldReceive('getAvailableQuantityForItem')
+                             ->once()
+                             ->with(1, Mockery::any(), Mockery::any(), null)
+                             ->andReturn(5);
+
+        $this->itemRepository->shouldReceive('find')
+                             ->once()
+                             ->with(1)
+                             ->andReturn(Item::factory()->make(['name' => 'Test Item']));
+
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectExceptionMessage('Недостаточно доступных единиц для предмета "Test Item" (доступно: 5)');
+
+        $this->service->createEvent($dto);
+    }
+
+    public function testUpdateEventFailsWhenItemUnavailable(): void
+    {
+        $event = Event::factory()->create();
+
+        $dto = new EventUpdateDTO(
+            name:      'Unavailable Update Event',
+            startDate: now()->format('Y-m-d H:i:s'),
+            endDate:   now()->addDays(2)->format('Y-m-d H:i:s'),
+            items:     [
+                           ['id' => 2, 'quantity' => 15],
+                       ],
+        );
+
+        $this->itemRepository->shouldReceive('getAvailableQuantityForItem')
+                             ->once()
+                             ->with(2, Mockery::any(), Mockery::any(), $event->id)
+                             ->andReturn(8);
+
+        $this->itemRepository->shouldReceive('find')
+                             ->once()
+                             ->with(2)
+                             ->andReturn(Item::factory()->make(['name' => 'Second Test Item']));
+
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectExceptionMessage('Недостаточно доступных единиц для предмета "Second Test Item" (доступно: 8)');
+
+        $this->service->updateEvent($event, $dto);
     }
 }
