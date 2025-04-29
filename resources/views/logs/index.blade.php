@@ -38,7 +38,7 @@
     @else
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle">
-                <thead class="table-light">
+                <thead>
                 <tr>
                     <th>Пользователь</th>
                     <th>Действие</th>
