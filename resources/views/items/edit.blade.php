@@ -19,14 +19,15 @@
             @foreach ($item->images as $image)
                 <div class="col-md-3 mb-3 position-relative">
                     <img src="{{ asset('storage/' . $image->path) }}" alt="Фото" class="img-fluid rounded">
-                    <form action="{{ route('items.images.destroy', $image) }}" method="POST"
-                          class="position-absolute top-0 end-0" style="z-index: 2;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger m-1"
-                                onclick="return confirm('Удалить это фото?')">×
-                        </button>
-                    </form>
+
+                    <button type="button"
+                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                            style="z-index: 2;"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            data-action="{{ route('items.images.destroy', $image) }}">
+                        ×
+                    </button>
                 </div>
             @endforeach
         </div>
@@ -92,4 +93,18 @@
     </div>
 
     <a href="{{ route('items.show', $item) }}" class="btn btn-secondary mt-3">Назад</a>
+    @include('partials.delete-modal')
+@endsection
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var action = button.getAttribute('data-action');
+                var form = document.getElementById('deleteForm');
+                form.action = action;
+            });
+        });
+    </script>
 @endsection
