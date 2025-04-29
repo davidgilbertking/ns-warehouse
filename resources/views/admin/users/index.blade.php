@@ -13,7 +13,7 @@
     @if ($users->count())
         <div class="table-responsive">
             <table class="table table-bordered align-middle">
-                <thead class="table-light">
+                <thead>
                 <tr>
                     <th>ID</th>
                     <th>Имя</th>
