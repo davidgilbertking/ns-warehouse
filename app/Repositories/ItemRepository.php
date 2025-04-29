@@ -99,4 +99,9 @@ class ItemRepository
     {
         return Item::all();
     }
+
+    public function find(int $id): ?Item
+    {
+        return Item::find($id);
+    }
 }

@@ -52,6 +52,4 @@ class Item extends Model
     {
         return $this->belongsToMany(Product::class, 'item_product')->withPivot('quantity');
     }
-
-
 }
