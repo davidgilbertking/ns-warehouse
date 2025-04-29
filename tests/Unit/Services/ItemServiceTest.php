@@ -10,13 +10,21 @@ use App\Models\Item;
 use App\Repositories\ItemRepository;
 use App\Services\ItemService;
 use Illuminate\Support\Facades\Auth;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use Mockery;
 use App\DTOs\ItemUpdateDTO;
 use App\DTOs\ItemFilterDTO;
 
 class ItemServiceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Auth::shouldReceive('check')->andReturn(false);
+        Auth::shouldReceive('id')->andReturn(1);
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
