@@ -34,7 +34,7 @@
                     <a href="{{ route('items.index') }}" class="btn btn-secondary  ">Очистить</a>
                 </div>
                 <div class="col-md-1">
-                    <button class="btn btn-primary ">Фильтр</button>
+                    <button type="submit" class="btn btn-primary ">Фильтр</button>
                 </div>
             </div>
         </form>
