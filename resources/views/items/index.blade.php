@@ -19,21 +19,19 @@
     <div class="mb-3">
         <form method="GET" action="{{ route('items.index') }}">
             <div class="row g-2">
-                <div class="col-md-6">
-                    <input type="text" id="search-input" name="search" class="form-control"
-                           placeholder="Поиск по названию..." value="{{ request('search') }}">
+                <div class="col-12 col-md-6">
+                    <input type="text" name="search" class="form-control" placeholder="Поиск по названию..." value="{{ request('search') }}">
                 </div>
-                <div class="col-md-2">
-                    <input type="date" name="available_from" class="form-control"
-                           value="{{ request('available_from') }}">
+                <div class="col-6 col-md-2">
+                    <input type="date" name="available_from" class="form-control" value="{{ request('available_from') }}">
                 </div>
-                <div class="col-md-2">
+                <div class="col-6 col-md-2">
                     <input type="date" name="available_to" class="form-control" value="{{ request('available_to') }}">
                 </div>
-                <div class="col-md-1 d-grid">
-                    <a href="{{ route('items.index') }}" class="btn btn-secondary  ">Очистить</a>
+                <div class="col-6 col-md-1 d-grid">
+                    <a href="{{ route('items.index') }}" class="btn btn-secondary">Очистить</a>
                 </div>
-                <div class="col-md-1">
+                <div class="col-6 col-md-1 d-grid">
                     <button type="submit" class="btn btn-primary">Фильтр</button>
                 </div>
             </div>
