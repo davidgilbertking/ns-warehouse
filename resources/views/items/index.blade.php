@@ -118,26 +118,32 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Автопоиск при вводе
             const searchInput = document.getElementById('search-input');
-            let typingTimer;
-            const doneTypingInterval = 500; // задержка в миллисекундах (0.5 сек)
+            if (searchInput) {
+                let typingTimer;
+                const doneTypingInterval = 500;
 
-            searchInput.addEventListener('input', function () {
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(() => {
-                    this.form.submit();
-                }, doneTypingInterval);
-            });
-        });
+                searchInput.addEventListener('input', function () {
+                    clearTimeout(typingTimer);
+                    typingTimer = setTimeout(() => {
+                        this.form.submit();
+                    }, doneTypingInterval);
+                });
+            }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            var deleteModal = document.getElementById('deleteModal');
-            deleteModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var action = button.getAttribute('data-action');
-                var form = document.getElementById('deleteForm');
-                form.action = action;
-            });
+            // Обработка открытия модального окна удаления
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const action = button.getAttribute('data-action');
+                    const form = document.getElementById('deleteForm');
+                    if (form) {
+                        form.action = action;
+                    }
+                });
+            }
         });
     </script>
 @endsection
