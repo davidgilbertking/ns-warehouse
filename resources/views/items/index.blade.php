@@ -123,6 +123,21 @@
                 var form = document.getElementById('deleteForm');
                 form.action = action;
             });
+
+            // Новый код для отслеживания отправки формы фильтра
+            const form = document.querySelector('form[action="{{ route('items.index') }}"]');
+            form.addEventListener('submit', function (e) {
+                const search = form.querySelector('input[name="search"]').value;
+                const availableFrom = form.querySelector('input[name="available_from"]').value;
+                const availableTo = form.querySelector('input[name="available_to"]').value;
+
+                alert(
+                    'Отправляемые данные:\n' +
+                    'search: ' + search + '\n' +
+                    'available_from: ' + availableFrom + '\n' +
+                    'available_to: ' + availableTo
+                );
+            });
         });
     </script>
 @endsection
