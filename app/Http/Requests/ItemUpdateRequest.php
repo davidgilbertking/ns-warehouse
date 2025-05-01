@@ -23,7 +23,7 @@ class ItemUpdateRequest extends FormRequest
             'material' => 'nullable|string|max:255',
             'supplier' => 'nullable|string|max:255',
             'storage_location' => 'nullable|string|max:255',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
         ];
     }
 }
