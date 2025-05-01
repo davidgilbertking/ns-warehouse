@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Auth;
 class ItemService
 {
     public function __construct(
-        protected ItemRepository $repository
+        protected ItemRepository $repository,
+        protected ItemImageService $imageService
     ) {}
 
     public function getPaginatedItems(ItemFilterDTO $filter, int $perPage = 10): LengthAwarePaginator
@@ -48,6 +49,11 @@ class ItemService
     public function createItem(ItemStoreDTO $data): Item
     {
         $item = $this->repository->create($data);
+
+        // Загружаем изображения, если есть
+        if (!empty($data->images)) {
+            $this->imageService->uploadImages($item, $data->images);
+        }
 
         $this->logAction('created_item', $item);
 
