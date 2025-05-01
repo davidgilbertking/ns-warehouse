@@ -24,16 +24,23 @@ class ItemService
 
     public function getPaginatedItems(ItemFilterDTO $filter, int $perPage = 10): LengthAwarePaginator
     {
+        $availableFrom = $filter->getAvailableFrom();
+        $availableTo = $filter->getAvailableTo();
+
+        if ($availableFrom && $availableTo && $availableFrom > $availableTo) {
+            throw new \InvalidArgumentException('Дата "От" не может быть позже даты "До".');
+        }
+
         $items = $this->repository->paginateWithFilters($filter, $perPage);
 
-        if ($filter->getAvailableFrom() && $filter->getAvailableTo()) {
+        if ($availableFrom && $availableTo) {
             foreach ($items as $item) {
                 $reserved = 0;
 
                 foreach ($item->reservations as $reservation) {
                     $event      = $reservation->event;
-                    $filterFrom = Carbon::parse($filter->getAvailableFrom())->startOfDay();
-                    $filterTo   = Carbon::parse($filter->getAvailableTo())->endOfDay();
+                    $filterFrom = Carbon::parse($availableFrom)->startOfDay();
+                    $filterTo   = Carbon::parse($availableTo)->endOfDay();
 
                     if (
                         $event

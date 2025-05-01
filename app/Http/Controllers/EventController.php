@@ -26,7 +26,12 @@ class EventController extends Controller
 
     public function index(Request $request)
     {
-        $events = $this->eventService->getFilteredEvents($request->all());
+        try {
+            $events = $this->eventService->getFilteredEvents($request->all());
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('events.index')
+                             ->with('error', $e->getMessage());
+        }
 
         return view('events.index', compact('events'));
     }

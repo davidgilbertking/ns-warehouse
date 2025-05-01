@@ -13,6 +13,13 @@ class EventRepository
 
     public function getFilteredEvents(array $filters)
     {
+        // Проверка валидности диапазона
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            if ($filters['start_date'] > $filters['end_date']) {
+                throw new \InvalidArgumentException('Дата "От" не может быть позже даты "До".');
+            }
+        }
+
         $query = Event::query();
 
         if (!empty($filters['search'])) {

@@ -116,6 +116,7 @@
     @endif
 
     @include('partials.delete-modal')
+    @include('partials.date-error-modal')
 
 @endsection
 @section('scripts')
@@ -128,6 +129,21 @@
                 var form = document.getElementById('deleteForm');
                 form.action = action;
             });
+
+            // Проверка диапазона дат при отправке формы фильтра предметов
+            const itemFilterForm = document.querySelector('form[action="{{ route('items.index') }}"]');
+            if (itemFilterForm) {
+                itemFilterForm.addEventListener('submit', function(e) {
+                    const startDate = document.getElementById('available_from').value;
+                    const endDate = document.getElementById('available_to').value;
+
+                    if (startDate && endDate && startDate > endDate) {
+                        const dateErrorModal = new bootstrap.Modal(document.getElementById('dateErrorModal'));
+                        dateErrorModal.show();
+                        e.preventDefault();
+                    }
+                });
+            }
         });
     </script>
 @endsection
