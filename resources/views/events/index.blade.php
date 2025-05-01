@@ -37,10 +37,14 @@
                                value="{{ request('search') }}">
                     </div>
                     <div class="col-md-2">
-                        <input type="text" id="start_date" name="start_date" class="form-control" placeholder="От" value="{{ request('start_date') }}">
+                        <input type="text" id="start_date" name="start_date" class="form-control datepicker"
+                               placeholder="От"
+                               value="{{ request('start_date') }}" autocomplete="off">
                     </div>
                     <div class="col-md-2">
-                        <input type="text" id="end_date" name="end_date" class="form-control" placeholder="До" value="{{ request('end_date') }}">
+                        <input type="text" id="end_date" name="end_date" class="form-control datepicker"
+                               placeholder="До"
+                               value="{{ request('end_date') }}" autocomplete="off">
                     </div>
                     <div class="col-md-2 d-grid">
                         <a href="{{ route('events.index') }}" class="btn btn-secondary  ">Очистить</a>

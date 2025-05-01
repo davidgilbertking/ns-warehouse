@@ -20,13 +20,18 @@
         <form method="GET" action="{{ route('items.index') }}">
             <div class="row g-2">
                 <div class="col-12 col-md-6">
-                    <input type="text" name="search" class="form-control" placeholder="Поиск по названию..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Поиск по названию..."
+                           value="{{ request('search') }}">
                 </div>
                 <div class="col-6 col-md-2">
-                    <input type="text" id="available_from" name="available_from" class="form-control" placeholder="От" value="{{ request('available_from') }}">
+                    <input type="text" id="available_from" name="available_from" class="form-control datepicker"
+                           placeholder="От"
+                           value="{{ request('available_from') }}" autocomplete="off">
                 </div>
                 <div class="col-6 col-md-2">
-                    <input type="text" id="available_to" name="available_to" class="form-control" placeholder="До" value="{{ request('available_to') }}">
+                    <input type="text" id="available_to" name="available_to" class="form-control datepicker"
+                           placeholder="До"
+                           value="{{ request('available_to') }}" autocomplete="off">
                 </div>
                 <div class="col-6 col-md-1 d-grid">
                     <a href="{{ route('items.index') }}" class="btn btn-secondary">Очистить</a>

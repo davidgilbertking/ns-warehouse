@@ -21,7 +21,8 @@
                    value="{{ request('description') }}">
         </div>
         <div class="col-md-2">
-            <input type="text" id="date" name="date" class="form-control" placeholder="Дата" value="{{ request('date') }}">
+            <input type="text" id="date" name="date" class="form-control datepicker" placeholder="Дата"
+                   value="{{ request('date') }}" autocomplete="off">
         </div>
         <div class="col-md-1 mt-2 d-grid">
             <a href="{{ route('logs.index') }}" class="btn btn-secondary  ">Очистить</a>

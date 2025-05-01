@@ -27,17 +27,20 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('items.*') ? 'active' : '' }}" href="{{ route('items.index') }}">
+                    <a class="nav-link {{ request()->routeIs('items.*') ? 'active' : '' }}"
+                       href="{{ route('items.index') }}">
                         Предметы
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                    <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}"
+                       href="{{ route('products.index') }}">
                         Продукты
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}" href="{{ route('events.index') }}">
+                    <a class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}"
+                       href="{{ route('events.index') }}">
                         Мероприятия
                     </a>
                 </li>
@@ -45,12 +48,14 @@
                 @auth
                     @if (auth()->user()->isAdmin())
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                               href="{{ route('admin.users.index') }}">
                                 Пользователи
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('logs.index') ? 'active' : '' }}" href="{{ route('logs.index') }}">
+                            <a class="nav-link {{ request()->routeIs('logs.index') ? 'active' : '' }}"
+                               href="{{ route('logs.index') }}">
                                 Логи
                             </a>
                         </li>
@@ -127,13 +132,18 @@
             '#date'
         ];
 
-        datepickers.forEach(function(selector) {
+        datepickers.forEach(function (selector) {
             const el = document.querySelector(selector);
             if (el) {
                 flatpickr(el, {
                     dateFormat: "Y-m-d",
                     locale: "ru",
-                    allowInput: true
+                    allowInput: true,
+                    onReady: function (selectedDates, dateStr, instance) {
+                        if (instance.input.hasAttribute('placeholder')) {
+                            instance._input.setAttribute('placeholder', instance.input.getAttribute('placeholder'));
+                        }
+                    }
                 });
             }
         });
