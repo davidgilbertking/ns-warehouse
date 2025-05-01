@@ -4,31 +4,29 @@
     <h1>Журнал действий</h1>
 
     <form method="GET" action="{{ route('logs.index') }}" class="row g-2 mb-4">
-        <div class="col-md-2">
+        <div class="col-12 col-md-2">
             <input type="text" name="user" class="form-control" placeholder="Пользователь"
                    value="{{ request('user') }}">
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-2">
             <input type="text" name="action" class="form-control" placeholder="Действие"
                    value="{{ request('action') }}">
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-2">
             <input type="text" name="entity_type" class="form-control" placeholder="Объект"
                    value="{{ request('entity_type') }}">
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-2">
             <input type="text" name="description" class="form-control" placeholder="Описание"
                    value="{{ request('description') }}">
         </div>
-        <div class="col-md-2">
-            <input type="text" id="date" name="date" class="form-control datepicker" placeholder="Дата"
+        <div class="col-12 col-md-2">
+            <input type="text" id="log_date" name="date" class="form-control datepicker" placeholder="Дата"
                    value="{{ request('date') }}" autocomplete="off">
         </div>
-        <div class="col-md-1 mt-2 d-grid">
-            <a href="{{ route('logs.index') }}" class="btn btn-secondary  ">Очистить</a>
-        </div>
-        <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-primary  ">Фильтр</button>
+        <div class="col-12 col-md-2 d-flex gap-2">
+            <a href="{{ route('logs.index') }}" class="btn btn-secondary w-50">Очистить</a>
+            <button type="submit" class="btn btn-primary w-50">Фильтр</button>
         </div>
     </form>
 
