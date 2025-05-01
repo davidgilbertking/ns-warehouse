@@ -55,7 +55,8 @@
 
                 <div class="mb-3">
                     <label for="images" class="form-label">Фотографии</label>
-                    <input type="file" id="images" name="images[]" class="form-control" accept="image/*" multiple>
+                    <input type="file" id="images" name="images[]" class="form-control" accept="image/*;capture=camera"
+                           multiple>
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-3">Создать предмет</button>
