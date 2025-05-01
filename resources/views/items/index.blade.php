@@ -45,7 +45,7 @@
 
     @can('create', App\Models\Item::class)
         <a href="{{ route('items.export', request()->only('search', 'available_from', 'available_to')) }}"
-           class="btn btn-info  mb-3">Экспортировать в CSV</a>
+           class="btn btn-info mb-3">Экспортировать список предметов в CSV</a>
     @endcan
     @if ($items->isEmpty())
         <div class="alert alert-warning">

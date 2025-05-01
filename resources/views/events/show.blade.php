@@ -13,7 +13,7 @@
     <p><strong>Период:</strong> {{ $event->start_date->format('d.m.Y') }} — {{ $event->end_date->format('d.m.Y') }}</p>
     <p><strong>Создатель:</strong> {{ $event->user->name }}</p>
 
-    <a href="{{ route('events.exportItems', $event) }}" class="btn btn-info  mb-3">Экспортировать список предметов в CSV</a>
+    <a href="{{ route('events.exportItems', $event) }}" class="btn btn-info mb-3">Экспортировать список предметов в CSV</a>
 
     <h3>Зарезервированные предметы:</h3>
     @if ($event->reservations->isEmpty())
