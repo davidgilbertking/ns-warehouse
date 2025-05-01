@@ -14,7 +14,6 @@ use App\DTOs\ItemUpdateDTO;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use App\Services\ItemExportService;
-use Illuminate\Support\Facades\Log;
 
 class ItemController extends Controller
 {
@@ -35,7 +34,6 @@ class ItemController extends Controller
 
     public function index(Request $request)
     {
-        Log::info('Item filter request', $request->all());
         $filter = ItemFilterDTO::fromArray($request->all());
         $items = $this->service->getPaginatedItems($filter);
 
