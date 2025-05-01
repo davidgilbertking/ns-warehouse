@@ -21,7 +21,7 @@
                    value="{{ request('description') }}">
         </div>
         <div class="col-12 col-md-2">
-            <input type="text" id="log_date" name="date" class="form-control datepicker" placeholder="Дата"
+            <input type="text" id="date" name="date" class="form-control datepicker" placeholder="Дата"
                    value="{{ request('date') }}" autocomplete="off">
         </div>
         <div class="col-12 col-md-2 d-flex gap-2">
