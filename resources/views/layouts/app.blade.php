@@ -139,6 +139,7 @@
                     dateFormat: "Y-m-d",
                     locale: "ru",
                     allowInput: true,
+                    disableMobile: true,
                     onReady: function (selectedDates, dateStr, instance) {
                         if (instance.input.hasAttribute('placeholder')) {
                             instance._input.setAttribute('placeholder', instance.input.getAttribute('placeholder'));
