@@ -25,12 +25,12 @@
 
                 <div class="mb-3">
                     <label class="form-label">Дата начала</label>
-                    <input type="date" id="start-date" name="start_date" class="form-control" required>
+                    <input type="text" id="start-date" name="start_date" class="form-control datepicker" placeholder="От" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Дата окончания</label>
-                    <input type="date" id="end-date" name="end_date" class="form-control" required>
+                    <input type="text" id="end-date" name="end_date" class="form-control datepicker" placeholder="До" required>
                 </div>
 
                 @if (!request()->has('product_id'))
