@@ -36,11 +36,10 @@
     <h5>Добавить новое фото:</h5>
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
-            <form method="POST" action="{{ route('items.images.store', $item) }}" enctype="multipart/form-data"
-                  class="mb-4">
+            <form method="POST" action="{{ route('items.images.store', $item) }}" enctype="multipart/form-data" class="mb-4">
                 @csrf
                 <div class="input-group">
-                    <input type="file" name="image" class="form-control" accept="image/*;capture=camera" required>
+                    <input type="file" name="image" class="form-control" accept="image/*" required>
                     <button type="submit" class="btn btn-success">Загрузить фото</button>
                 </div>
             </form>
@@ -60,8 +59,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Описание</label>
-                    <textarea name="description" class="form-control"
-                              rows="3">{{ old('description', $item->description) }}</textarea>
+                    <textarea name="description" class="form-control" rows="3">{{ old('description', $item->description) }}</textarea>
                 </div>
 
                 <div class="mb-3">
@@ -71,26 +69,22 @@
 
                 <div class="mb-3">
                     <label class="form-label">Материал</label>
-                    <input type="text" name="material" class="form-control"
-                           value="{{ old('material', $item->material ?? '') }}">
+                    <input type="text" name="material" class="form-control" value="{{ old('material', $item->material ?? '') }}">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Подрядчик / Магазин</label>
-                    <input type="text" name="supplier" class="form-control"
-                           value="{{ old('supplier', $item->supplier ?? '') }}">
+                    <input type="text" name="supplier" class="form-control" value="{{ old('supplier', $item->supplier ?? '') }}">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Место хранения</label>
-                    <input type="text" name="storage_location" class="form-control"
-                           value="{{ old('storage_location', $item->storage_location ?? '') }}">
+                    <input type="text" name="storage_location" class="form-control" value="{{ old('storage_location', $item->storage_location ?? '') }}">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Количество</label>
-                    <input type="number" name="quantity" class="form-control" min="0"
-                           value="{{ old('quantity', $item->quantity) }}" required>
+                    <input type="number" name="quantity" class="form-control" min="0" value="{{ old('quantity', $item->quantity) }}" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
