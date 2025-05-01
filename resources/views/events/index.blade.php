@@ -32,26 +32,26 @@
         <div class="mb-3">
             <form method="GET" action="{{ route('events.index') }}">
                 <div class="row g-2">
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-6">
                         <input type="text" name="search" class="form-control" placeholder="Поиск по названию..."
                                value="{{ request('search') }}">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-6 col-md-2">
                         <input type="text" id="start_date" name="start_date" class="form-control datepicker"
                                placeholder="От"
                                value="{{ request('start_date') }}" autocomplete="off">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-6 col-md-2">
                         <input type="text" id="end_date" name="end_date" class="form-control datepicker"
                                placeholder="До"
                                value="{{ request('end_date') }}" autocomplete="off">
                     </div>
-                    <div class="col-md-2 d-grid">
-                        <a href="{{ route('events.index') }}" class="btn btn-secondary  ">Очистить</a>
+                    <div class="col-6 col-md-1 d-grid">
+                        <a href="{{ route('events.index') }}" class="btn btn-secondary">Очистить</a>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-6 col-md-1 d-grid">
                         <input type="hidden" name="show_archive" value="{{ request('show_archive') ? 1 : 0 }}">
-                        <button class="btn btn-primary ">Фильтр</button>
+                        <button type="submit" class="btn btn-primary">Фильтр</button>
                     </div>
                 </div>
             </form>
