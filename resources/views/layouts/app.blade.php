@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NS Warehouse</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <style>
         .nav-link.active {
@@ -86,6 +87,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 
 <script>
     // Тёмная тема: запоминаем выбор в localStorage
@@ -115,6 +118,25 @@
                 toggleButton.innerHTML = '🌙';
             }
         }
+
+        const datepickers = [
+            '#available_from',
+            '#available_to',
+            '#start_date',
+            '#end_date',
+            '#date'
+        ];
+
+        datepickers.forEach(function(selector) {
+            const el = document.querySelector(selector);
+            if (el) {
+                flatpickr(el, {
+                    dateFormat: "Y-m-d",
+                    locale: "ru",
+                    allowInput: true
+                });
+            }
+        });
     });
 </script>
 
