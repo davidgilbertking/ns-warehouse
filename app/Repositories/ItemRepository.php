@@ -52,6 +52,12 @@ class ItemRepository
             });
         }
 
+        \Log::info('SQL', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+            'search_raw' => $filter->getSearch(),
+        ]);
+
         return $query;
     }
 
