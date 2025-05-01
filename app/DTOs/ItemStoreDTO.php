@@ -14,6 +14,7 @@ readonly class ItemStoreDTO
         private ?string $material,
         private ?string $supplier,
         private ?string $storageLocation,
+        public ?array $images = null,
     ) {}
 
     public static function fromArray(array $data): self

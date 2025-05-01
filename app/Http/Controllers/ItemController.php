@@ -50,12 +50,20 @@ class ItemController extends Controller
     {
         $this->authorizeAction();
 
-        $dto = ItemStoreDTO::fromArray($request->validated());
-        $item = $this->service->createItem($dto);
+        $validated = $request->validated();
 
-        if ($request->hasFile('images')) {
-            $this->imageService->uploadImages($item, $request->file('images'));
-        }
+        $dto = new ItemStoreDTO(
+            name: $validated['name'],
+            description: $validated['description'] ?? null,
+            quantity: (int) $validated['quantity'],
+            size: $validated['size'] ?? null,
+            material: $validated['material'] ?? null,
+            supplier: $validated['supplier'] ?? null,
+            storageLocation: $validated['storage_location'] ?? null,
+            images: $request->file('images')
+        );
+
+        $this->service->createItem($dto);
 
         return redirect()->route('items.index')->with('success', 'Предмет создан!');
     }
