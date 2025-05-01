@@ -16,7 +16,7 @@ class ItemImageStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'],
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
         ];
     }
 }
