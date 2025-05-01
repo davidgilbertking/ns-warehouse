@@ -23,10 +23,10 @@
                     <input type="text" name="search" class="form-control" placeholder="Поиск по названию..." value="{{ request('search') }}">
                 </div>
                 <div class="col-6 col-md-2">
-                    <input type="date" name="available_from" class="form-control" value="{{ request('available_from') }}">
+                    <input type="date" name="available_from" class="form-control" placeholder="От" value="{{ request('available_from') }}">
                 </div>
                 <div class="col-6 col-md-2">
-                    <input type="date" name="available_to" class="form-control" value="{{ request('available_to') }}">
+                    <input type="date" name="available_to" class="form-control" placeholder="До" value="{{ request('available_to') }}">
                 </div>
                 <div class="col-6 col-md-1 d-grid">
                     <a href="{{ route('items.index') }}" class="btn btn-secondary">Очистить</a>
