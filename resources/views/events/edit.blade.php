@@ -21,17 +21,20 @@
 
                 <div class="mb-3">
                     <label class="form-label">Название</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name', $event->name) }}" required>
+                    <input type="text" name="name" class="form-control" value="{{ old('name', $event->name) }}"
+                           required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Дата начала</label>
-                    <input type="date" id="start-date" name="start_date" class="form-control" value="{{ old('start_date', $event->start_date->format('Y-m-d')) }}" required>
+                    <input type="text" id="start-date" name="start_date" class="form-control datepicker" placeholder="От"
+                           value="{{ old('start_date', $event->start_date->format('Y-m-d')) }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Дата окончания</label>
-                    <input type="date" id="end-date" name="end_date" class="form-control" value="{{ old('end_date', $event->end_date->format('Y-m-d')) }}" required>
+                    <input type="text" id="end-date" name="end_date" class="form-control datepicker" placeholder="До"
+                           value="{{ old('end_date', $event->end_date->format('Y-m-d')) }}" required>
                 </div>
 
                 <div class="mb-3">

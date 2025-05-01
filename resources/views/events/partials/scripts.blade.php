@@ -211,4 +211,16 @@
 
     renderSelectedItems();
     renderSearchResults();
+
+    ['#start-date', '#end-date'].forEach(function(selector) {
+        const el = document.querySelector(selector);
+        if (el) {
+            flatpickr(el, {
+                dateFormat: "Y-m-d",
+                locale: "ru",
+                allowInput: true,
+                disableMobile: true,
+            });
+        }
+    });
 </script>
