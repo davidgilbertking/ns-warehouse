@@ -30,7 +30,7 @@
         </form>
 
         <div class="mb-3">
-            <form method="GET" action="{{ route('events.index') }}">
+            <form id="filter-form" method="GET" action="{{ route('events.index') }}">
                 <div class="row g-2">
                     <div class="col-12 col-md-6">
                         <input type="text" name="search" class="form-control" placeholder="Поиск по названию..."
@@ -105,6 +105,7 @@
     @endif
 
     @include('partials.delete-modal')
+    @include('partials.date-error-modal')
 
 @endsection
 @section('scripts')
@@ -132,6 +133,21 @@
                     typingTimer = setTimeout(() => {
                         this.form.submit();
                     }, doneTypingInterval);
+                });
+            }
+
+            // Проверка диапазона дат при отправке формы фильтра мероприятий
+            const eventFilterForm = document.getElementById('filter-form');
+            if (eventFilterForm) {
+                eventFilterForm.addEventListener('submit', function(e) {
+                    const startDate = document.getElementById('start_date').value;
+                    const endDate = document.getElementById('end_date').value;
+
+                    if (startDate && endDate && startDate > endDate) {
+                        const dateErrorModal = new bootstrap.Modal(document.getElementById('dateErrorModal'));
+                        dateErrorModal.show();
+                        e.preventDefault();
+                    }
                 });
             }
         });

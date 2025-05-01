@@ -35,7 +35,13 @@ class ItemController extends Controller
     public function index(Request $request)
     {
         $filter = ItemFilterDTO::fromArray($request->all());
-        $items = $this->service->getPaginatedItems($filter);
+
+        try {
+            $items = $this->service->getPaginatedItems($filter);
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('items.index')
+                             ->with('error', $e->getMessage());
+        }
 
         return view('items.index', compact('items'));
     }
