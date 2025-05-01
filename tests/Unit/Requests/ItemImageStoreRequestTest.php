@@ -59,7 +59,7 @@ class ItemImageStoreRequestTest extends TestCase
     public function testRulesFailWithTooLargeImage(): void
     {
         // Arrange
-        $file = UploadedFile::fake()->image('large-photo.jpg')->size(5000); // 5000 KB > 4096 KB
+        $file = UploadedFile::fake()->image('large-photo.jpg')->size(15000); // 25000 KB > 10240 KB
 
         $data = ['image' => $file];
 
