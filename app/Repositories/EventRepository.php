@@ -19,12 +19,18 @@ class EventRepository
             $query->where('name', 'ILIKE', '%' . $filters['search'] . '%');
         }
 
-        if (!empty($filters['start_date'])) {
-            $query->whereDate('start_date', '>=', $filters['start_date']);
-        }
-
-        if (!empty($filters['end_date'])) {
-            $query->whereDate('end_date', '<=', $filters['end_date']);
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            // Ищем любое пересечение
+            $query->where(function ($q) use ($filters) {
+                $q->whereDate('start_date', '<=', $filters['end_date'])
+                  ->whereDate('end_date', '>=', $filters['start_date']);
+            });
+        } elseif (!empty($filters['start_date'])) {
+            // Только start_date задан — пересечение по этому дню
+            $query->whereDate('end_date', '>=', $filters['start_date']);
+        } elseif (!empty($filters['end_date'])) {
+            // Только end_date задан — пересечение по этому дню
+            $query->whereDate('start_date', '<=', $filters['end_date']);
         }
 
         if (empty($filters['show_archive']) || $filters['show_archive'] == false) {

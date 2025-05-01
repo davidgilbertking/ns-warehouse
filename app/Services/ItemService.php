@@ -11,14 +11,16 @@ use App\DTOs\ItemFilterDTO;
 use App\Models\Item;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\ActivityLog;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ItemService
 {
     public function __construct(
-        protected ItemRepository $repository,
+        protected ItemRepository   $repository,
         protected ItemImageService $imageService
-    ) {}
+    ) {
+    }
 
     public function getPaginatedItems(ItemFilterDTO $filter, int $perPage = 10): LengthAwarePaginator
     {
@@ -29,12 +31,17 @@ class ItemService
                 $reserved = 0;
 
                 foreach ($item->reservations as $reservation) {
-                    $event = $reservation->event;
-                    if ($event && (
-                            ($event->start_date >= $filter->getAvailableFrom() && $event->start_date <= $filter->getAvailableTo()) ||
-                            ($event->end_date >= $filter->getAvailableFrom() && $event->end_date <= $filter->getAvailableTo()) ||
-                            ($event->start_date <= $filter->getAvailableFrom() && $event->end_date >= $filter->getAvailableTo())
-                        )) {
+                    $event      = $reservation->event;
+                    $filterFrom = Carbon::parse($filter->getAvailableFrom())->startOfDay();
+                    $filterTo   = Carbon::parse($filter->getAvailableTo())->endOfDay();
+
+                    if (
+                        $event
+                        && (
+                            $event->start_date <= $filterTo
+                            && $event->end_date >= $filterFrom
+                        )
+                    ) {
                         $reserved += $reservation->quantity;
                     }
                 }
@@ -81,10 +88,10 @@ class ItemService
     {
         if (Auth::check()) {
             ActivityLog::create([
-                                    'user_id' => Auth::id(),
-                                    'action' => $action,
+                                    'user_id'     => Auth::id(),
+                                    'action'      => $action,
                                     'entity_type' => 'Item',
-                                    'entity_id' => $item->id,
+                                    'entity_id'   => $item->id,
                                     'description' => "{$action}: {$item->name}",
                                 ]);
         }
