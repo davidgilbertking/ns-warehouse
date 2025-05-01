@@ -21,7 +21,7 @@
                    value="{{ request('description') }}">
         </div>
         <div class="col-md-2">
-            <input type="date" name="date" class="form-control" value="{{ request('date') }}">
+            <input type="date" name="date" class="form-control" placeholder="Дата" value="{{ request('date') }}">
         </div>
         <div class="col-md-1 mt-2 d-grid">
             <a href="{{ route('logs.index') }}" class="btn btn-secondary  ">Очистить</a>
