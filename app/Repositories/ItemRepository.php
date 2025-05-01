@@ -43,7 +43,7 @@ class ItemRepository
         $query = Item::with(['products', 'reservations.event']);
 
         if ($filter->getSearch()) {
-            $search = strtolower($filter->getSearch());
+            $search = mb_strtolower($filter->getSearch(), 'UTF-8');
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('LOWER(description) LIKE ?', ['%' . $search . '%'])
