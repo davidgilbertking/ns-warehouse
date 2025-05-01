@@ -39,7 +39,7 @@
             <form method="POST" action="{{ route('items.images.store', $item) }}" enctype="multipart/form-data" class="mb-4">
                 @csrf
                 <div class="input-group">
-                    <input type="file" name="image" class="form-control" required>
+                    <input type="file" name="image" class="form-control" accept="image/*" required>
                     <button type="submit" class="btn btn-success">Загрузить фото</button>
                 </div>
             </form>
