@@ -43,11 +43,11 @@
             const div = document.createElement('div');
             div.classList.add('mb-2');
             div.innerHTML = `
-                <strong>${item.name}</strong> (кол-во: ${item.quantity})
-                <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
-                <input type="hidden" name="items[${item.id}][quantity]" value="${item.quantity}">
-                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="removeItem(${item.id})">Удалить</button>
-            `;
+            <strong>${item.name}</strong>
+            <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
+            <input type="number" name="items[${item.id}][quantity]" value="${item.quantity}" class="form-control d-inline-block w-auto mx-2" min="1">
+            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="removeItem(${item.id})">Удалить</button>
+        `;
             container.appendChild(div);
         }
 
@@ -145,11 +145,11 @@
                     }
 
                     div.innerHTML = `
-                    <strong class="${extraClass}">${item.name}</strong> (кол-во: ${item.quantity})
-                    <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
-                    <input type="hidden" name="items[${item.id}][quantity]" value="${item.quantity}">
-                    <button type="button" class="btn btn-danger btn-sm ms-2" onclick="removeItem(${item.id})">Удалить</button>
-                `;
+    <strong class="${extraClass}">${item.name}</strong>
+    <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
+    <input type="number" name="items[${item.id}][quantity]" value="${item.quantity}" class="form-control d-inline-block w-auto mx-2" min="1">
+    <button type="button" class="btn btn-danger btn-sm ms-2" onclick="removeItem(${item.id})">Удалить</button>
+`;
                     container.appendChild(div);
                 }
 
@@ -212,7 +212,7 @@
     renderSelectedItems();
     renderSearchResults();
 
-    ['#start-date', '#end-date'].forEach(function(selector) {
+    ['#start-date', '#end-date'].forEach(function (selector) {
         const el = document.querySelector(selector);
         if (el) {
             flatpickr(el, {
