@@ -52,6 +52,8 @@ class ItemRepository
             });
         }
 
+        $query->orderBy('name', 'asc');
+
         return $query;
     }
 
