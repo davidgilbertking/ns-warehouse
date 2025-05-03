@@ -14,7 +14,9 @@ class ProductRepository
 {
     public function paginateWithItemCount(int $perPage = 10): LengthAwarePaginator
     {
-        return Product::withCount('items')->paginate($perPage);
+        return Product::withCount('items')
+                      ->orderBy('name', 'asc')
+                      ->paginate($perPage);
     }
 
     public function all(): Collection

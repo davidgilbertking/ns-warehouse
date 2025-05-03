@@ -11,7 +11,7 @@ class UserRepository
 {
     public function paginate(int $perPage = 10): LengthAwarePaginator
     {
-        return User::paginate($perPage);
+        return User::orderBy('id', 'asc')->paginate($perPage);
     }
 
     public function create(array $data): User
