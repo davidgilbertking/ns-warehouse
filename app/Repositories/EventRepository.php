@@ -44,7 +44,7 @@ class EventRepository
             $query->where('end_date', '>=', now()->startOfDay());
         }
 
-        return $query->orderBy('start_date')->paginate(10)->withQueryString();
+        return $query->orderBy('start_date', 'desc')->paginate(10)->withQueryString();
     }
 
     public function loadEventWithRelations(Event $event): Event

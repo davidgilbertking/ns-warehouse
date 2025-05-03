@@ -11,6 +11,15 @@
     @endcan
     <h1>Мероприятия</h1>
 
+    {{-- Форма для показа архива (всегда видна) --}}
+    <form method="GET" action="{{ route('events.index') }}" class="mb-3">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="show_archive" name="show_archive" value="1"
+                   {{ request('show_archive') ? 'checked' : '' }} onchange="this.form.submit()">
+            <label class="form-check-label" for="show_archive">Показать архив мероприятий</label>
+        </div>
+    </form>
+
     @if ($events->isEmpty())
         <div class="alert alert-warning mb-3">
             Нет мероприятий для отображения.
@@ -20,14 +29,6 @@
             <a href="{{ route('events.index') }}" class="btn btn-secondary">Очистить фильтры</a>
         </div>
     @else
-
-        <form method="GET" action="{{ route('events.index') }}" class="mb-3">
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="show_archive" name="show_archive" value="1"
-                       {{ request('show_archive') ? 'checked' : '' }} onchange="this.form.submit()">
-                <label class="form-check-label" for="show_archive">Показать архив мероприятий</label>
-            </div>
-        </form>
 
         <div class="mb-3">
             <form id="filter-form" method="GET" action="{{ route('events.index') }}">
@@ -57,7 +58,6 @@
             </form>
         </div>
 
-
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -71,7 +71,18 @@
                 </thead>
 
                 <tbody>
+                @php
+                    $now = \Illuminate\Support\Carbon::now();
+                    $dividerInserted = false;
+                @endphp
                 @foreach ($events as $event)
+                    @if (!$dividerInserted && $event->end_date < $now)
+                        <tr>
+                            <td colspan="100%" style="border-top: 3px solid black;"></td>
+                        </tr>
+                        @php $dividerInserted = true; @endphp
+                    @endif
+
                     <tr>
                         <td>
                             <a href="{{ route('events.show', $event) }}">
