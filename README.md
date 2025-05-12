@@ -10,7 +10,7 @@
 
 ### Установка
 
-1. Клонировать репозиторий:
+1. Клонировать репозиторий: 
 
 ```bash
 git clone https://github.com/davidgilbertking/ns-warehouse.git
