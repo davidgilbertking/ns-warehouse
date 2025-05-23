@@ -52,6 +52,13 @@ class ItemRepository
             });
         }
 
+        // 🔍 Фильтрация по тэгам (название связанных products)
+        if ($filter->getProduct()) {
+            $query->whereHas('products', function ($q) use ($filter) {
+                $q->where('name', 'ILIKE', '%' . $filter->getProduct() . '%');
+            });
+        }
+
         $query->orderBy('name', 'asc');
 
         return $query;

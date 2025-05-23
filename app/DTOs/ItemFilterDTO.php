@@ -10,6 +10,7 @@ readonly class ItemFilterDTO
         private ?string $search = null,
         private ?string $availableFrom = null,
         private ?string $availableTo = null,
+        private ?string $product = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -18,6 +19,7 @@ readonly class ItemFilterDTO
             $data['search'] ?? null,
             $data['available_from'] ?? null,
             $data['available_to'] ?? null,
+            $data['product'] ?? null,
         );
     }
 
@@ -34,5 +36,10 @@ readonly class ItemFilterDTO
     public function getAvailableTo(): ?string
     {
         return $this->availableTo;
+    }
+
+    public function getProduct(): ?string
+    {
+        return $this->product;
     }
 }

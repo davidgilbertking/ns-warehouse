@@ -39,12 +39,16 @@
                 <div class="col-6 col-md-1 d-grid">
                     <button type="submit" class="btn btn-primary">Фильтр</button>
                 </div>
+                <div class="col-12 col-md-6">
+                    <input type="text" name="product" class="form-control" placeholder="Поиск по тэгам..."
+                           value="{{ request('product') }}">
+                </div>
             </div>
         </form>
     </div>
 
     @can('create', App\Models\Item::class)
-        <a href="{{ route('items.export', request()->only('search', 'available_from', 'available_to')) }}"
+        <a href="{{ route('items.export', request()->only('search', 'available_from', 'available_to', 'product')) }}"
            class="btn btn-info mb-3">Экспортировать список предметов в CSV</a>
     @endcan
     @if ($items->isEmpty())
