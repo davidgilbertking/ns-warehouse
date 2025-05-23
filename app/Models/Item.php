@@ -37,6 +37,9 @@ class Item extends Model
         'design_links',
         'event_history',
         'storage_place',
+        'op_media',
+        'real_media',
+        'event_media',
     ];
 
     protected $casts = [
