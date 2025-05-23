@@ -71,4 +71,8 @@ class User extends Authenticatable
         return $this->role === 'viewer';
     }
 
+    public function isGuest()
+    {
+        return $this->role === 'guest';
+    }
 }
