@@ -19,7 +19,7 @@
 
     <h4>Общее</h4>
     @include('items.partials.general-show')
-
+    @if (!auth()->user()?->isGuest())
     <div class="accordion mb-3" id="accordionSections">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOp">
@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-
+    @endif
     <a href="{{ route('items.index') }}" class="btn btn-secondary mt-3">Назад</a>
 
     <!-- Модалка для увеличения -->

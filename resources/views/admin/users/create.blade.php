@@ -44,6 +44,7 @@
                         <option value="user">Пользователь</option>
                         <option value="admin">Администратор</option>
                         <option value="viewer">Наблюдатель</option>
+                        <option value="guest">Гость</option>
                     </select>
                 </div>
 

@@ -31,6 +31,7 @@
                         <option value="admin" {{ $user->isAdmin() ? 'selected' : '' }}>Администратор</option>
                         <option value="user" {{ $user->isUser() ? 'selected' : '' }}>Пользователь</option>
                         <option value="viewer" {{ $user->isViewer() ? 'selected' : '' }}>Наблюдатель</option>
+                        <option value="guest" {{ $user->isGuest() ? 'selected' : '' }}>Гость</option>
                     </select>
                 </div>
 
