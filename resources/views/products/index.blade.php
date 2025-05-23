@@ -2,10 +2,10 @@
 
 @section('content')
     @can('create', App\Models\Product::class)
-        <a href="{{ route('products.create') }}" class="btn btn-success mb-3">Создать продукт</a>
+        <a href="{{ route('products.create') }}" class="btn btn-success mb-3">Создать тэг</a>
     @endcan
 
-    <h1>Список продуктов</h1>
+    <h1>Список тэгов</h1>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -14,7 +14,7 @@
 
     @if ($products->isEmpty())
         <div class="alert alert-warning">
-            Нет продуктов для отображения.
+            Нет тэгов для отображения.
         </div>
     @else
         <div class="table-responsive">

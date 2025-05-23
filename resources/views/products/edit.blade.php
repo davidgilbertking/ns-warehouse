@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Редактировать продукт: {{ $product->name }}</h1>
+    <h1>Редактировать тэг: {{ $product->name }}</h1>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -20,7 +20,7 @@
                 @method('PUT')
 
                 <div class="mb-3">
-                    <label class="form-label">Название продукта</label>
+                    <label class="form-label">Название тэга</label>
                     <input type="text" name="name" class="form-control" value="{{ old('name', $product->name) }}" required>
                 </div>
 
@@ -29,7 +29,7 @@
                     <!-- Сюда будут добавляться выбранные предметы -->
                 </div>
 
-                <h4>Добавить предмет в продукт:</h4>
+                <h4>Добавить предмет в тэг:</h4>
                 <div class="mb-3">
                     <input type="text" id="item-search" class="form-control" placeholder="Поиск по предметам...">
                 </div>
