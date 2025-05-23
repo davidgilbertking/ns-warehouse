@@ -4,7 +4,7 @@
     <h1>{{ $item->name }}</h1>
 
     @if(!auth()->user()->isViewer())
-        <a href="{{ route('items.edit', $item) }}" class="btn btn-warning  mb-3">Редактировать</a>
+        <a href="{{ route('items.edit', $item) }}" class="btn btn-warning mb-3">Редактировать</a>
     @endif
 
     @if ($item->images->count())
@@ -17,29 +17,51 @@
         </div>
     @endif
 
-    @if ($item->description)
-        <p><strong>Описание:</strong> {{ $item->description }}</p>
-    @endif
+    <h4>Общее</h4>
+    @include('items.partials.general-show')
 
-    @if ($item->size)
-        <p><strong>Размер:</strong> {{ $item->size }}</p>
-    @endif
+    <div class="accordion mb-3" id="accordionSections">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOp">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOp" aria-expanded="false" aria-controls="collapseOp">
+                    Для ОП
+                </button>
+            </h2>
+            <div id="collapseOp" class="accordion-collapse collapse" aria-labelledby="headingOp" data-bs-parent="#accordionSections">
+                <div class="accordion-body">
+                    @include('items.partials.op-show')
+                </div>
+            </div>
+        </div>
 
-    @if ($item->material)
-        <p><strong>Материал:</strong> {{ $item->material }}</p>
-    @endif
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingReal">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReal" aria-expanded="false" aria-controls="collapseReal">
+                    Для реализации
+                </button>
+            </h2>
+            <div id="collapseReal" class="accordion-collapse collapse" aria-labelledby="headingReal" data-bs-parent="#accordionSections">
+                <div class="accordion-body">
+                    @include('items.partials.real-show')
+                </div>
+            </div>
+        </div>
 
-    @if ($item->supplier)
-        <p><strong>Подрядчик / Магазин:</strong> {{ $item->supplier }}</p>
-    @endif
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingHistory">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
+                    История проведения
+                </button>
+            </h2>
+            <div id="collapseHistory" class="accordion-collapse collapse" aria-labelledby="headingHistory" data-bs-parent="#accordionSections">
+                <div class="accordion-body">
+                    @include('items.partials.history-show')
+                </div>
+            </div>
+        </div>
+    </div>
 
-    @if ($item->storage_location)
-        <p><strong>Место хранения:</strong> {{ $item->storage_location }}</p>
-    @endif
-    <p><strong>Количество на складе:</strong> {{ $item->quantity }}</p>
-
-
-    <a href="{{ route('items.index') }}" class="btn btn-secondary">Назад</a>
+    <a href="{{ route('items.index') }}" class="btn btn-secondary mt-3">Назад</a>
 
     <!-- Модалка для увеличения -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
@@ -49,14 +71,14 @@
             </div>
         </div>
     </div>
-
 @endsection
+
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const images = document.querySelectorAll('.zoomable-image');
             images.forEach(img => {
-                img.addEventListener('click', function() {
+                img.addEventListener('click', function () {
                     const modal = document.getElementById('imageModal');
                     const modalImg = document.getElementById('modalImage');
                     modalImg.src = this.src;

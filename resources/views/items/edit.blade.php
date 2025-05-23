@@ -47,54 +47,32 @@
     </div>
 
     <div class="row justify-content-center mt-4">
-        <div class="col-12 col-md-8 col-lg-6">
-            <form method="POST" action="{{ route('items.update', $item) }}" enctype="multipart/form-data">
+        <div class="col-12 col-md-10">
+            <form method="POST" action="{{ route('items.update', $item) }}">
                 @csrf
                 @method('PUT')
 
-                <div class="mb-3">
-                    <label class="form-label">Название</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name', $item->name) }}" required>
-                </div>
+                <h4 class="mt-4">Общее</h4>
+                @include('items.partials.general-fields-edit')
 
-                <div class="mb-3">
-                    <label class="form-label">Описание</label>
-                    <textarea name="description" class="form-control" rows="3">{{ old('description', $item->description) }}</textarea>
-                </div>
+                <h4 class="mt-4">Для ОП</h4>
+                @include('items.partials.op-fields-edit')
 
-                <div class="mb-3">
-                    <label class="form-label">Размер</label>
-                    <input type="text" name="size" class="form-control" value="{{ old('size', $item->size ?? '') }}">
-                </div>
+                <h4 class="mt-4">Для реализации</h4>
+                @include('items.partials.real-fields-edit')
 
-                <div class="mb-3">
-                    <label class="form-label">Материал</label>
-                    <input type="text" name="material" class="form-control" value="{{ old('material', $item->material ?? '') }}">
-                </div>
+                <h4 class="mt-4">История проведения</h4>
+                @include('items.partials.history-fields-edit')
 
-                <div class="mb-3">
-                    <label class="form-label">Подрядчик / Магазин</label>
-                    <input type="text" name="supplier" class="form-control" value="{{ old('supplier', $item->supplier ?? '') }}">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Место хранения</label>
-                    <input type="text" name="storage_location" class="form-control" value="{{ old('storage_location', $item->storage_location ?? '') }}">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Количество</label>
-                    <input type="number" name="quantity" class="form-control" min="0" value="{{ old('quantity', $item->quantity) }}" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
+                <button type="submit" class="btn btn-primary mt-4">Сохранить изменения</button>
+                <a href="{{ route('items.show', $item) }}" class="btn btn-secondary mt-4 ms-2">Назад</a>
             </form>
         </div>
     </div>
 
-    <a href="{{ route('items.show', $item) }}" class="btn btn-secondary mt-3">Назад</a>
     @include('partials.delete-modal')
 @endsection
+
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -106,5 +84,15 @@
                 form.action = action;
             });
         });
+
+        function addMediaField(containerId, inputName) {
+            const wrapper = document.getElementById(containerId);
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = inputName;
+            input.className = 'form-control mb-2';
+            input.placeholder = 'Ссылка на медиа';
+            wrapper.appendChild(input);
+        }
     </script>
 @endsection

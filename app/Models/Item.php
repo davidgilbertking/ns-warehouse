@@ -20,6 +20,29 @@ class Item extends Model
         'material',
         'supplier',
         'storage_location',
+        'mechanics',
+        'scalability',
+        'client_price',
+        'branding_options',
+        'adaptation_options',
+        'op_price',
+        'construction_description',
+        'contractor',
+        'production_cost',
+        'change_history',
+        'consumables',
+        'implementation_comments',
+        'mounting',
+        'storage_features',
+        'design_links',
+        'event_history',
+        'storage_place',
+    ];
+
+    protected $casts = [
+        'op_media' => 'array',
+        'real_media' => 'array',
+        'event_media' => 'array',
     ];
 
     public function reservations()

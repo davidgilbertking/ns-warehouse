@@ -31,7 +31,6 @@ class ItemController extends Controller
         $this->imageService = $imageService;
     }
 
-
     public function index(Request $request)
     {
         $filter = ItemFilterDTO::fromArray($request->all());
@@ -59,14 +58,34 @@ class ItemController extends Controller
         $validated = $request->validated();
 
         $dto = new ItemStoreDTO(
-            name: $validated['name'],
-            description: $validated['description'] ?? null,
-            quantity: (int) $validated['quantity'],
-            size: $validated['size'] ?? null,
-            material: $validated['material'] ?? null,
-            supplier: $validated['supplier'] ?? null,
-            storageLocation: $validated['storage_location'] ?? null,
-            images: $request->file('images')
+            name:                    $validated['name'],
+            description:             $validated['description'] ?? null,
+            quantity:                (int)$validated['quantity'],
+            size:                    $validated['size'] ?? null,
+            material:                $validated['material'] ?? null,
+            supplier:                $validated['supplier'] ?? null,
+            storageLocation:         $validated['storage_location'] ?? null,
+            mechanics:               $validated['mechanics'] ?? null,
+            scalability:             $validated['scalability'] ?? null,
+            clientPrice:             isset($validated['client_price']) ? (float)$validated['client_price'] : null,
+            brandingOptions:         $validated['branding_options'] ?? null,
+            adaptationOptions:       $validated['adaptation_options'] ?? null,
+            opPrice:                 $validated['op_price'] ?? null,
+            constructionDescription: $validated['construction_description'] ?? null,
+            contractor:              $validated['contractor'] ?? null,
+            productionCost:          $validated['production_cost'] ?? null,
+            changeHistory:           $validated['change_history'] ?? null,
+            consumables:             $validated['consumables'] ?? null,
+            implementationComments:  $validated['implementation_comments'] ?? null,
+            mounting:                $validated['mounting'] ?? null,
+            storageFeatures:         $validated['storage_features'] ?? null,
+            designLinks:             $validated['design_links'] ?? null,
+            eventHistory:            $validated['event_history'] ?? null,
+            storagePlace:            $validated['storage_place'] ?? null,
+            images:                  $request->file('images'),
+            opMedia:                 $validated['op_media'] ?? [],
+            realMedia:               $validated['real_media'] ?? [],
+            eventMedia:              $validated['event_media'] ?? []
         );
 
         $this->service->createItem($dto);
