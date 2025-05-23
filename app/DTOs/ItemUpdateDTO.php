@@ -31,9 +31,9 @@ readonly class ItemUpdateDTO
         private ?string $designLinks,
         private ?string $eventHistory,
         private ?string $storagePlace,
-        private ?array $opMedia = null,
-        private ?array $realMedia = null,
-        private ?array $eventMedia = null,
+        private ?array $opMedia = [],
+        private ?array $realMedia = [],
+        private ?array $eventMedia = [],
     ) {}
 
     public static function fromArray(array $data): self
@@ -63,9 +63,9 @@ readonly class ItemUpdateDTO
             $data['design_links'] ?? null,
             $data['event_history'] ?? null,
             $data['storage_place'] ?? null,
-            $data['op_media'] ?? null,
-            $data['real_media'] ?? null,
-            $data['event_media'] ?? null,
+            $data['op_media'] ?? [],
+            $data['real_media'] ?? [],
+            $data['event_media'] ?? [],
         );
     }
 

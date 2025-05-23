@@ -31,10 +31,10 @@ readonly class ItemStoreDTO
         private ?string $designLinks,
         private ?string $eventHistory,
         private ?string $storagePlace,
-        public ?array $images = null,
-        public ?array $opMedia = null,
-        public ?array $realMedia = null,
-        public ?array $eventMedia = null,
+        private ?array $opMedia = [],
+        private ?array $realMedia = [],
+        private ?array $eventMedia = [],
+        private ?array $images = [] // only for store
     ) {}
 
     public static function fromArray(array $data): self
@@ -64,10 +64,10 @@ readonly class ItemStoreDTO
             $data['design_links'] ?? null,
             $data['event_history'] ?? null,
             $data['storage_place'] ?? null,
-            $data['images'] ?? null,
-            $data['op_media'] ?? null,
-            $data['real_media'] ?? null,
-            $data['event_media'] ?? null,
+            $data['op_media'] ?? [],
+            $data['real_media'] ?? [],
+            $data['event_media'] ?? [],
+            $data['images'] ?? [],
         );
     }
 
@@ -102,5 +102,10 @@ readonly class ItemStoreDTO
             'real_media' => $this->realMedia,
             'event_media' => $this->eventMedia,
         ];
+    }
+
+    public function getImages(): ?array
+    {
+        return $this->images;
     }
 }
