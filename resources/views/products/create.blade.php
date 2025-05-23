@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Создать продукт</h1>
+    <h1>Создать тэг</h1>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -19,7 +19,7 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label class="form-label">Название продукта</label>
+                    <label class="form-label">Название тэга</label>
                     <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
                 </div>
 
@@ -28,7 +28,7 @@
                     <!-- Сюда будут добавляться выбранные предметы -->
                 </div>
 
-                <h4>Добавить предмет в продукт:</h4>
+                <h4>Добавить предмет в тэг:</h4>
                 <div class="mb-3">
                     <input type="text" id="item-search" class="form-control" placeholder="Поиск по предметам...">
                 </div>
@@ -36,7 +36,7 @@
                     <!-- Здесь появятся результаты поиска -->
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Создать продукт</button>
+                <button type="submit" class="btn btn-primary mt-3">Создать тэг</button>
             </form>
         </div>
     </div>

@@ -38,9 +38,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Продукт</label>
+                    <label class="form-label">Тэг</label>
                     <select id="product-select" class="form-select">
-                        <option value="">-- Выберите продукт --</option>
+                        <option value="">-- Выберите тэг --</option>
                         @foreach ($products as $product)
                             <option value="{{ $product->id }}">{{ $product->name }}</option>
                         @endforeach

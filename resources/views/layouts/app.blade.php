@@ -35,7 +35,7 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}"
                        href="{{ route('products.index') }}">
-                        Продукты
+                        Тэги
                     </a>
                 </li>
                 <li class="nav-item">

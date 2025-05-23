@@ -58,7 +58,7 @@
                 <tr>
                     <th>Название</th>
                     <th>Описание</th>
-                    <th>Продукты</th>
+                    <th>Тэги</th>
                     <th>Количество всего</th>
                     @if (request()->filled('available_from') && request()->filled('available_to'))
                         <th>Количество доступно</th>
