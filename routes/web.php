@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ItemImageController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ItemVideoController;
 
 // Главная страница
 Route::get('/', function () {
@@ -39,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/items/images/{image}', [ItemImageController::class, 'destroy'])->name('items.images.destroy');
     Route::post('/items/{item}/images', [ItemImageController::class, 'store'])->name('items.images.store');
     Route::resource('items', ItemController::class);
+
+    // Видео для предметов
+    Route::post('/items/{item}/videos', [ItemVideoController::class, 'store'])->name('items.videos.store');
+    Route::delete('/items/videos/{video}', [ItemVideoController::class, 'destroy'])->name('items.videos.destroy');
 
     // Мероприятия
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');

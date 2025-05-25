@@ -58,6 +58,11 @@ class Item extends Model
         return $this->hasMany(ItemImage::class);
     }
 
+    public function videos()
+    {
+        return $this->hasMany(ItemVideo::class);
+    }
+
     public function availableQuantity($startDate = null, $endDate = null)
     {
         $reserved = $this->reservations()

@@ -46,6 +46,34 @@
         </div>
     </div>
 
+    @if ($item->videos->count())
+        <h5>Текущие видео:</h5>
+        <div class="row mb-3">
+            @foreach ($item->videos as $video)
+                <div class="col-md-6 mb-3 position-relative">
+                    <video controls class="w-100 rounded">
+                        <source src="{{ asset('storage/' . $video->path) }}" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+    <h5>Добавить новое видео:</h5>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <form method="POST" action="{{ route('items.videos.store', $item) }}" enctype="multipart/form-data" class="mb-4">
+                @csrf
+                <div class="input-group">
+                    <input type="file" id="videos" name="videos[]" class="form-control"
+                           accept="video/mp4,video/webm,video/ogg,video/quicktime" multiple required>
+                    <button type="submit" class="btn btn-success">Загрузить видео</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="row justify-content-center mt-4">
         <div class="col-12 col-md-10">
             <form method="POST" action="{{ route('items.update', $item) }}">

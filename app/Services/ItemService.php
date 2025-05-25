@@ -18,7 +18,8 @@ class ItemService
 {
     public function __construct(
         protected ItemRepository   $repository,
-        protected ItemImageService $imageService
+        protected ItemImageService $imageService,
+        protected ItemVideoService $videoService
     ) {
     }
 
@@ -69,6 +70,10 @@ class ItemService
             $this->imageService->uploadImages($item, $data->getImages());
         }
 
+        if (!empty($data->getVideoFiles())) {
+            $this->videoService->uploadVideos($item, $data->getVideoFiles());
+        }
+
         $item->products()->sync($data->getProductIds());
 
         $this->logAction('created_item', $item);
@@ -79,6 +84,10 @@ class ItemService
     public function updateItem(Item $item, ItemUpdateDTO $data): bool
     {
         $result = $this->repository->update($item, $data);
+
+        if (!empty($data->getVideoFiles())) {
+            $this->videoService->uploadVideos($item, $data->getVideoFiles());
+        }
 
         $item->products()->sync($data->getProductIds());
 
