@@ -47,5 +47,12 @@
             input.placeholder = 'Ссылка на медиа';
             wrapper.appendChild(input);
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#product_ids').select2({
+                placeholder: "Выберите тэги",
+                width: '100%'
+            });
+        });
     </script>
 @endsection

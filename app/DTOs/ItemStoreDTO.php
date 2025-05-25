@@ -34,7 +34,8 @@ readonly class ItemStoreDTO
         private ?array $opMedia = [],
         private ?array $realMedia = [],
         private ?array $eventMedia = [],
-        private ?array $images = [] // only for store
+        private ?array $images = [], // only for store
+        private ?array $productIds = []
     ) {}
 
     public static function fromArray(array $data): self
@@ -68,6 +69,7 @@ readonly class ItemStoreDTO
             $data['real_media'] ?? [],
             $data['event_media'] ?? [],
             $data['images'] ?? [],
+            $data['product_ids'] ?? []
         );
     }
 
@@ -101,6 +103,7 @@ readonly class ItemStoreDTO
             'op_media' => $this->opMedia,
             'real_media' => $this->realMedia,
             'event_media' => $this->eventMedia,
+            'product_ids' => $this->productIds
         ];
     }
 
@@ -108,4 +111,10 @@ readonly class ItemStoreDTO
     {
         return $this->images;
     }
+
+    public function getProductIds(): array
+    {
+        return $this->productIds ?? [];
+    }
+
 }

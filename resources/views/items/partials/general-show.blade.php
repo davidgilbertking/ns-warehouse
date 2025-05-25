@@ -21,3 +21,9 @@
 @if ($item->client_price)
     <p><strong>Стоимость для клиента:</strong> {{ $item->client_price }} ₽</p>
 @endif
+
+@if ($item->products->isNotEmpty())
+    <p><strong>Тэги:</strong>
+        {{ $item->products->pluck('name')->implode(', ') }}
+    </p>
+@endif

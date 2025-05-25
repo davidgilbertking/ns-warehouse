@@ -6,11 +6,67 @@
     <title>NS Warehouse</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
         .nav-link.active {
             font-weight: bold;
             color: #0d6efd;
+        }
+
+        /* Select2 под Bootstrap 5 */
+        .select2-container--default .select2-selection--multiple {
+            background-color: var(--bs-body-bg);
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            min-height: calc(2.25rem + 2px);
+            padding: 0.375rem 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #e9ecef;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem 0.25rem 0.75rem; /* ← левый отступ больше */
+            color: #212529;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            position: absolute;
+            left: 0.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .select2-container--default .select2-search--inline .select2-search__field {
+            width: auto !important;
+            flex-grow: 1;
+            margin-top: 2px;
         }
     </style>
 </head>
@@ -91,9 +147,11 @@
     @yield('content')
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
     // Тёмная тема: запоминаем выбор в localStorage

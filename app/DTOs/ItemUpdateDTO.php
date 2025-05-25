@@ -34,7 +34,8 @@ readonly class ItemUpdateDTO
         private ?array $opMedia = [],
         private ?array $realMedia = [],
         private ?array $eventMedia = [],
-    ) {}
+        private ?array $productIds = []
+) {}
 
     public static function fromArray(array $data): self
     {
@@ -66,6 +67,7 @@ readonly class ItemUpdateDTO
             $data['op_media'] ?? [],
             $data['real_media'] ?? [],
             $data['event_media'] ?? [],
+            $data['product_ids'] ?? []
         );
     }
 
@@ -99,6 +101,13 @@ readonly class ItemUpdateDTO
             'op_media' => $this->opMedia,
             'real_media' => $this->realMedia,
             'event_media' => $this->eventMedia,
+            'product_ids' => $this->productIds
         ];
     }
+
+    public function getProductIds(): array
+    {
+        return $this->productIds ?? [];
+    }
+
 }

@@ -69,6 +69,8 @@ class ItemService
             $this->imageService->uploadImages($item, $data->getImages());
         }
 
+        $item->products()->sync($data->getProductIds());
+
         $this->logAction('created_item', $item);
 
         return $item;
@@ -77,6 +79,8 @@ class ItemService
     public function updateItem(Item $item, ItemUpdateDTO $data): bool
     {
         $result = $this->repository->update($item, $data);
+
+        $item->products()->sync($data->getProductIds());
 
         if ($result) {
             $this->logAction('updated_item', $item);

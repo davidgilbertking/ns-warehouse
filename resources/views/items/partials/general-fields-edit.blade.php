@@ -32,3 +32,19 @@
     <label for="client_price" class="form-label">Стоимость для клиента (₽)</label>
     <input type="number" step="0.01" id="client_price" name="client_price" class="form-control" value="{{ old('client_price', $item->client_price) }}">
 </div>
+
+<div class="mb-3">
+    <label for="product_ids" class="form-label">Тэги</label>
+    <select name="product_ids[]" id="product_ids" class="form-select" multiple>
+        @foreach ($products as $product)
+            <option value="{{ $product->id }}"
+                    @if (in_array($product->id, old('product_ids', $item->products->pluck('id')->toArray())))
+                        selected
+                @endif
+            >
+                {{ $product->name }}
+            </option>
+        @endforeach
+    </select>
+    <div class="form-text">Можно выбрать несколько тэгов</div>
+</div>
