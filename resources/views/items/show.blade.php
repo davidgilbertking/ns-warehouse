@@ -17,6 +17,20 @@
         </div>
     @endif
 
+    @if ($item->videos->count())
+        <h5 class="mt-4">Видео:</h5>
+        <div class="row">
+            @foreach ($item->videos as $video)
+                <div class="col-md-6 mb-3">
+                    <video controls class="w-100 rounded">
+                        <source src="{{ asset('storage/' . $video->path) }}" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
     <h4>Общее</h4>
     @include('items.partials.general-show')
     @if (!auth()->user()?->isGuest())

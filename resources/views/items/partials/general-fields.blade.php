@@ -47,3 +47,11 @@
     <label for="images" class="form-label">Фотографии</label>
     <input type="file" id="images" name="images[]" class="form-control" accept="image/*" multiple>
 </div>
+
+<div class="mb-3">
+    <label for="videos" class="form-label">Видео</label>
+    <input type="file" id="videos" name="videos[]" class="form-control"
+           accept="video/mp4,video/webm,video/ogg,video/quicktime" multiple>
+    <div class="form-text">Можно загрузить несколько видео (mp4, webm, ogg, mov)</div>
+</div>
+
