@@ -65,8 +65,8 @@ class ItemService
         $item = $this->repository->create($data);
 
         // Загружаем изображения, если есть
-        if (!empty($data->images)) {
-            $this->imageService->uploadImages($item, $data->images);
+        if (!empty($data->getImages())) {
+            $this->imageService->uploadImages($item, $data->getImages());
         }
 
         $this->logAction('created_item', $item);
