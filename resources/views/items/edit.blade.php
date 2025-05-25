@@ -51,10 +51,19 @@
         <div class="row mb-3">
             @foreach ($item->videos as $video)
                 <div class="col-md-6 mb-3 position-relative">
-                    <video controls class="w-100 rounded">
+                    <video controls class="w-100 rounded shadow-sm">
                         <source src="{{ asset('storage/' . $video->path) }}" type="video/mp4">
                         Ваш браузер не поддерживает видео.
                     </video>
+
+                    <button type="button"
+                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                            style="z-index: 2;"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            data-action="{{ route('items.videos.destroy', $video) }}">
+                        ×
+                    </button>
                 </div>
             @endforeach
         </div>
