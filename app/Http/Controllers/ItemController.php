@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Services\ItemImageService;
 use App\Services\ItemService;
 use App\Http\Requests\ItemStoreRequest;
@@ -18,10 +19,11 @@ use App\Services\ItemExportService;
 class ItemController extends Controller
 {
     public function __construct(
-        protected ItemService $service,
+        protected ItemService       $service,
         protected ItemExportService $exportService,
-        protected ItemImageService $imageService
-    ) {}
+        protected ItemImageService  $imageService
+    ) {
+    }
 
     public function index(Request $request)
     {
@@ -39,7 +41,8 @@ class ItemController extends Controller
     public function create()
     {
         $this->authorizeAction();
-        return view('items.create');
+        $products = Product::orderBy('name')->get();
+        return view('items.create', compact('products'));
     }
 
     public function store(ItemStoreRequest $request)
@@ -60,7 +63,8 @@ class ItemController extends Controller
     public function edit(Item $item)
     {
         $this->authorizeAction();
-        return view('items.edit', compact('item'));
+        $products = Product::orderBy('name')->get();
+        return view('items.edit', compact('item', 'products'));
     }
 
     public function update(ItemUpdateRequest $request, Item $item)
@@ -93,7 +97,7 @@ class ItemController extends Controller
         $filter = ItemFilterDTO::fromArray($request->all());
 
         $csvContent = $this->exportService->export($filter);
-        $filename = 'items_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
+        $filename   = 'items_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
 
         return response($csvContent)
             ->header('Content-Type', 'text/csv')
@@ -139,7 +143,9 @@ class ItemController extends Controller
             opMedia:                 array_filter($validated['op_media'] ?? []),
             realMedia:               array_filter($validated['real_media'] ?? []),
             eventMedia:              array_filter($validated['event_media'] ?? []),
-            images:                  $request->file('images')
+            images:                  $request->file('images'),
+            productIds:              $validated['product_ids'] ?? []
+
         );
     }
 
@@ -148,33 +154,34 @@ class ItemController extends Controller
         $validated = $request->validated();
 
         return new ItemUpdateDTO(
-            name: $validated['name'],
-            description: $validated['description'] ?? null,
-            quantity: (int) $validated['quantity'],
-            size: $validated['size'] ?? null,
-            material: $validated['material'] ?? null,
-            supplier: $validated['supplier'] ?? null,
-            storageLocation: $validated['storage_location'] ?? null,
-            mechanics: $validated['mechanics'] ?? null,
-            scalability: $validated['scalability'] ?? null,
-            clientPrice: isset($validated['client_price']) ? (float) $validated['client_price'] : null,
-            brandingOptions: $validated['branding_options'] ?? null,
-            adaptationOptions: $validated['adaptation_options'] ?? null,
-            opPrice: $validated['op_price'] ?? null,
+            name:                    $validated['name'],
+            description:             $validated['description'] ?? null,
+            quantity:                (int)$validated['quantity'],
+            size:                    $validated['size'] ?? null,
+            material:                $validated['material'] ?? null,
+            supplier:                $validated['supplier'] ?? null,
+            storageLocation:         $validated['storage_location'] ?? null,
+            mechanics:               $validated['mechanics'] ?? null,
+            scalability:             $validated['scalability'] ?? null,
+            clientPrice:             isset($validated['client_price']) ? (float)$validated['client_price'] : null,
+            brandingOptions:         $validated['branding_options'] ?? null,
+            adaptationOptions:       $validated['adaptation_options'] ?? null,
+            opPrice:                 $validated['op_price'] ?? null,
             constructionDescription: $validated['construction_description'] ?? null,
-            contractor: $validated['contractor'] ?? null,
-            productionCost: $validated['production_cost'] ?? null,
-            changeHistory: $validated['change_history'] ?? null,
-            consumables: $validated['consumables'] ?? null,
-            implementationComments: $validated['implementation_comments'] ?? null,
-            mounting: $validated['mounting'] ?? null,
-            storageFeatures: $validated['storage_features'] ?? null,
-            designLinks: $validated['design_links'] ?? null,
-            eventHistory: $validated['event_history'] ?? null,
-            storagePlace: $validated['storage_place'] ?? null,
-            opMedia: array_filter($validated['op_media'] ?? []),
-            realMedia: array_filter($validated['real_media'] ?? []),
-            eventMedia: array_filter($validated['event_media'] ?? [])
+            contractor:              $validated['contractor'] ?? null,
+            productionCost:          $validated['production_cost'] ?? null,
+            changeHistory:           $validated['change_history'] ?? null,
+            consumables:             $validated['consumables'] ?? null,
+            implementationComments:  $validated['implementation_comments'] ?? null,
+            mounting:                $validated['mounting'] ?? null,
+            storageFeatures:         $validated['storage_features'] ?? null,
+            designLinks:             $validated['design_links'] ?? null,
+            eventHistory:            $validated['event_history'] ?? null,
+            storagePlace:            $validated['storage_place'] ?? null,
+            opMedia:                 array_filter($validated['op_media'] ?? []),
+            realMedia:               array_filter($validated['real_media'] ?? []),
+            eventMedia:              array_filter($validated['event_media'] ?? []),
+            productIds:              $validated['product_ids'] ?? []
         );
     }
 }

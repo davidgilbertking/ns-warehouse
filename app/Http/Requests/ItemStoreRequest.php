@@ -57,6 +57,10 @@ class ItemStoreRequest extends FormRequest
 
             'event_media' => ['nullable', 'array'],
             'event_media.*' => ['nullable', 'string'],
+
+            'product_ids' => ['nullable', 'array'],
+            'product_ids.*' => ['exists:products,id'],
+
         ];
     }
 }

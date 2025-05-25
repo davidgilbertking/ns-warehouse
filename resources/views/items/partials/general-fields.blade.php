@@ -34,6 +34,16 @@
 </div>
 
 <div class="mb-3">
+    <label for="product_ids" class="form-label">Тэги</label>
+    <select name="product_ids[]" id="product_ids" class="form-select" multiple>
+        @foreach ($products as $product)
+            <option value="{{ $product->id }}">{{ $product->name }}</option>
+        @endforeach
+    </select>
+    <div class="form-text">Можно выбрать несколько тэгов</div>
+</div>
+
+<div class="mb-3">
     <label for="images" class="form-label">Фотографии</label>
     <input type="file" id="images" name="images[]" class="form-control" accept="image/*" multiple>
 </div>
