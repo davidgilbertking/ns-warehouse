@@ -6,7 +6,7 @@
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-    @if(!auth()->user()->isViewer())
+    @if(!auth()->user()->isViewer() && !auth()->user()->isGuest())
         <div class="d-flex gap-2 mb-4">
             @if(auth()->user()->isAdmin())
                 <a href="{{ route('products.edit', $product) }}" class="btn btn-warning">Редактировать тэг</a>

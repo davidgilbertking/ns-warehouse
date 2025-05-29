@@ -3,7 +3,7 @@
 @section('content')
     <h1>{{ $item->name }}</h1>
 
-    @if(!auth()->user()->isViewer())
+    @if(!auth()->user()->isViewer() && !auth()->user()->isGuest())
         <a href="{{ route('items.edit', $item) }}" class="btn btn-warning mb-3">Редактировать</a>
     @endif
 
