@@ -14,9 +14,11 @@ use Tests\TestCase;
 use Mockery;
 use App\DTOs\ItemUpdateDTO;
 use App\DTOs\ItemFilterDTO;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ItemServiceTest extends TestCase
 {
+    use RefreshDatabase;
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,7 +37,8 @@ class ItemServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
         $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $itemService = new ItemService($repositoryMock, $imageServiceMock);
+        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $dto = new ItemStoreDTO(
             name: 'Test Item',
@@ -93,7 +96,8 @@ class ItemServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
         $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $itemService = new ItemService($repositoryMock, $imageServiceMock);
+        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $item = new Item([
                              'id' => 1,
@@ -148,7 +152,8 @@ class ItemServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
         $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $itemService = new ItemService($repositoryMock, $imageServiceMock);
+        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $item = new Item([
                              'id' => 1,
@@ -173,7 +178,8 @@ class ItemServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
         $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $itemService = new ItemService($repositoryMock, $imageServiceMock);
+        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
             search: null,
@@ -220,7 +226,8 @@ class ItemServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
         $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $itemService = new ItemService($repositoryMock, $imageServiceMock);
+        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
             search: null,
@@ -266,7 +273,8 @@ class ItemServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
         $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $itemService = new ItemService($repositoryMock, $imageServiceMock);
+        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
             search: null,
@@ -312,7 +320,8 @@ class ItemServiceTest extends TestCase
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
         $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $itemService = new ItemService($repositoryMock, $imageServiceMock);
+        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
             search: null,
