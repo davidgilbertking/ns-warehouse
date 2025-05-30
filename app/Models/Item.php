@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Item extends Model
 {
@@ -82,5 +83,32 @@ class Item extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class, 'item_product')->withPivot('quantity');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($item) {
+            // Удаление связанных изображений
+            foreach ($item->images as $image) {
+                Storage::disk('public')->delete($image->path);
+            }
+
+            // Удаление связанных видео
+            foreach ($item->videos as $video) {
+                Storage::disk('public')->delete($video->path);
+            }
+
+            // Удаление ссылок из JSON полей
+            foreach (['op_media', 'real_media', 'event_media'] as $field) {
+                $mediaArray = $item->$field ?? [];
+                if (is_array($mediaArray)) {
+                    foreach ($mediaArray as $path) {
+                        Storage::disk('public')->delete($path);
+                    }
+                }
+            }
+        });
     }
 }
