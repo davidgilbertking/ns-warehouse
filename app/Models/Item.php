@@ -99,24 +99,22 @@ class Item extends Model
         parent::boot();
 
         static::deleting(function ($item) {
-            // Удаление связанных изображений
+            // Удаление связанных изображений и видеофайлов из диска
             foreach ($item->images as $image) {
                 Storage::disk('public')->delete($image->path);
             }
 
-            // Удаление связанных видео
             foreach ($item->videos as $video) {
                 Storage::disk('public')->delete($video->path);
             }
 
-            // Удаление ссылок из JSON полей
-            foreach (['op_media', 'real_media', 'event_media'] as $field) {
-                $mediaArray = $item->$field ?? [];
-                if (is_array($mediaArray)) {
-                    foreach ($mediaArray as $path) {
-                        Storage::disk('public')->delete($path);
-                    }
-                }
+            // Мягкое удаление связанных записей
+            foreach ($item->images as $image) {
+                $image->delete();
+            }
+
+            foreach ($item->videos as $video) {
+                $video->delete();
             }
         });
     }
