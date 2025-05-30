@@ -48,7 +48,9 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Создать</button>
+                <button type="submit" class="btn btn-primary"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">Создать
+                </button>
             </form>
         </div>
     </div>

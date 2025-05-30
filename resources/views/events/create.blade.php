@@ -20,17 +20,20 @@
 
                 <div class="mb-3">
                     <label class="form-label">Название</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name', $defaultName ?? '') }}" required>
+                    <input type="text" name="name" class="form-control" value="{{ old('name', $defaultName ?? '') }}"
+                           required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Дата начала</label>
-                    <input type="text" id="start-date" name="start_date" class="form-control datepicker" placeholder="От" required>
+                    <input type="text" id="start-date" name="start_date" class="form-control datepicker"
+                           placeholder="От" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Дата окончания</label>
-                    <input type="text" id="end-date" name="end_date" class="form-control datepicker" placeholder="До" required>
+                    <input type="text" id="end-date" name="end_date" class="form-control datepicker" placeholder="До"
+                           required>
                 </div>
 
                 @if (!request()->has('product_id'))
@@ -58,7 +61,10 @@
                     <!-- Здесь будут появляться найденные предметы -->
                 </div>
 
-                <button type="submit" id="create-event-button" class="btn btn-primary mt-3">Создать мероприятие</button>
+                <button type="submit" id="create-event-button" class="btn btn-primary mt-3"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">Создать
+                    мероприятие
+                </button>
             </form>
         </div>
     </div>

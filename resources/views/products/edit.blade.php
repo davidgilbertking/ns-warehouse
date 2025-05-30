@@ -21,7 +21,8 @@
 
                 <div class="mb-3">
                     <label class="form-label">Название тэга</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name', $product->name) }}" required>
+                    <input type="text" name="name" class="form-control" value="{{ old('name', $product->name) }}"
+                           required>
                 </div>
 
                 <h4>Выбранные предметы:</h4>
@@ -37,7 +38,10 @@
                     <!-- Здесь появятся результаты поиска -->
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
+                <button type="submit" class="btn btn-primary mt-3"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">Сохранить
+                    изменения
+                </button>
             </form>
         </div>
     </div>

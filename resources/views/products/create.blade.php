@@ -36,7 +36,9 @@
                     <!-- Здесь появятся результаты поиска -->
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Создать тэг</button>
+                <button type="submit" class="btn btn-primary mt-3"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">Создать тэг
+                </button>
             </form>
         </div>
     </div>

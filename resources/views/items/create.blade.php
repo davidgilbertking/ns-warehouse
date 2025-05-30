@@ -30,7 +30,11 @@
                 <h4 class="mt-4">История проведения</h4>
                 @include('items.partials.history-fields')
 
-                <button type="submit" class="btn btn-primary mt-4">Создать предмет</button>
+                <button type="submit"
+                        class="btn btn-primary mt-4"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">
+                    Создать предмет
+                </button>
                 <a href="{{ route('items.index') }}" class="btn btn-secondary mt-4 ms-2">Назад</a>
             </form>
         </div>

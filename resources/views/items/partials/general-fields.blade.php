@@ -15,7 +15,7 @@
 
 <div class="mb-3">
     <label for="size" class="form-label">Размер</label>
-    <input type="text" id="size" name="size" class="form-control">
+    <textarea id="size" name="size" class="form-control" rows="2"></textarea>
 </div>
 
 <div class="mb-3">
