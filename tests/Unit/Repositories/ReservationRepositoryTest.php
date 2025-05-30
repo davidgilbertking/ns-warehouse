@@ -45,13 +45,14 @@ class ReservationRepositoryTest extends TestCase
         $item1 = Item::factory()->create();
         $item2 = Item::factory()->create();
 
-        $this->repository->createReservation($event, $item1->id, 2);
-        $this->repository->createReservation($event, $item2->id, 4);
+        $reservation1 = $this->repository->createReservation($event, $item1->id, 2);
+        $reservation2 = $this->repository->createReservation($event, $item2->id, 4);
 
         $this->assertDatabaseCount('reservations', 2);
 
         $this->repository->deleteAllByEvent($event);
 
-        $this->assertDatabaseCount('reservations', 0);
+        $this->assertSoftDeleted('reservations', ['id' => $reservation1->id]);
+        $this->assertSoftDeleted('reservations', ['id' => $reservation2->id]);
     }
 }
