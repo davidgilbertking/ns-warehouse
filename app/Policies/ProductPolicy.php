@@ -9,7 +9,7 @@ class ProductPolicy
 {
     public function update(User $user, Product $product): bool
     {
-        return $user->isAdmin(); // Только админ может редактировать продукт
+        return $user->isAdmin(); // Только админ может редактировать тэг
     }
 
     public function delete(User $user, Product $product): bool

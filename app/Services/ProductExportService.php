@@ -21,7 +21,7 @@ class ProductExportService
             $handle = fopen('php://output', 'w');
 
             // Заголовки CSV
-            fputcsv($handle, ['Название предмета', 'Количество в продукте']);
+            fputcsv($handle, ['Название предмета', 'Количество в тэге']);
 
             foreach ($product->items as $item) {
                 fputcsv($handle, [

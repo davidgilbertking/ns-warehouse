@@ -4,7 +4,7 @@
     <div class="text-center mt-5">
         <h1 class="display-4 fade-in">Добро пожаловать в NS Warehouse!</h1>
         <p class="lead mt-4 fade-in" style="animation-delay: 0.5s;">
-            Здесь вы можете управлять складом, мероприятиями и продуктами быстро и удобно.
+            Здесь вы можете управлять складом, мероприятиями и тэгами быстро и удобно.
         </p>
         <a href="{{ route('items.index') }}" class="btn btn-primary btn-lg mt-4 fade-in" style="animation-delay: 1s;">
             Перейти в Каталог предметов

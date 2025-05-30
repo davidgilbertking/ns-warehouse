@@ -56,7 +56,7 @@ class ProductControllerTest extends TestCase
         $response = $this->post(route('products.store'), $data);
 
         $response->assertRedirect(route('products.index'));
-        $response->assertSessionHas('success', 'Продукт создан!');
+        $response->assertSessionHas('success', 'Тэг создан!');
 
         $this->assertDatabaseHas('products', [
             'name' => 'Test Product',
@@ -82,7 +82,7 @@ class ProductControllerTest extends TestCase
         $response = $this->patch(route('products.update', $product), $payload);
 
         $response->assertRedirect(route('products.show', $product));
-        $response->assertSessionHas('success', 'Продукт обновлён!');
+        $response->assertSessionHas('success', 'Тэг обновлён!');
 
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
@@ -100,7 +100,7 @@ class ProductControllerTest extends TestCase
         $response = $this->delete(route('products.destroy', $product));
 
         $response->assertRedirect(route('products.index'));
-        $response->assertSessionHas('success', 'Продукт удалён!');
+        $response->assertSessionHas('success', 'Тэг удалён!');
 
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }

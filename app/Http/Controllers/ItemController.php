@@ -79,12 +79,12 @@ class ItemController extends Controller
 
     public function destroy(Item $item)
     {
-        if ($item->reservations()->exists()) {
+        if ($item->activeReservations()->exists()) {
             return back()->with('error', 'Нельзя удалить предмет, который зарезервирован в мероприятии.');
         }
 
         if ($item->products()->exists()) {
-            return back()->with('error', 'Нельзя удалить предмет, который используется в продукте.');
+            return back()->with('error', 'Нельзя удалить предмет, который используется в тэге.');
         }
 
         $this->service->deleteItem($item);
