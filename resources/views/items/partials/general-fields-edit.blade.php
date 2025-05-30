@@ -15,7 +15,7 @@
 
 <div class="mb-3">
     <label for="size" class="form-label">Размер</label>
-    <input type="text" id="size" name="size" class="form-control" value="{{ old('size', $item->size) }}">
+    <textarea id="size" name="size" class="form-control" rows="2">{{ old('size', $item->size) }}</textarea>
 </div>
 
 <div class="mb-3">

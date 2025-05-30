@@ -101,7 +101,11 @@
                 <h4 class="mt-4">История проведения</h4>
                 @include('items.partials.history-fields-edit')
 
-                <button type="submit" class="btn btn-primary mt-4">Сохранить изменения</button>
+                <button type="submit"
+                        class="btn btn-primary mt-4"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">
+                    Сохранить изменения
+                </button>
                 <a href="{{ route('items.show', $item) }}" class="btn btn-secondary mt-4 ms-2">Назад</a>
             </form>
         </div>

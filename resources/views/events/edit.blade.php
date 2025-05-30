@@ -27,7 +27,8 @@
 
                 <div class="mb-3">
                     <label class="form-label">Дата начала</label>
-                    <input type="text" id="start-date" name="start_date" class="form-control datepicker" placeholder="От"
+                    <input type="text" id="start-date" name="start_date" class="form-control datepicker"
+                           placeholder="От"
                            value="{{ old('start_date', $event->start_date->format('Y-m-d')) }}" required>
                 </div>
 
@@ -61,7 +62,10 @@
 
                 <input type="hidden" id="event-id" value="{{ $event->id }}">
 
-                <button type="submit" id="save-event-button" class="btn btn-primary mt-3">Сохранить изменения</button>
+                <button type="submit" id="save-event-button" class="btn btn-primary mt-3"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">Сохранить
+                    изменения
+                </button>
             </form>
         </div>
     </div>

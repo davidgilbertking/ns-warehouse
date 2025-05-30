@@ -22,7 +22,8 @@
 
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
+                    <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}"
+                           required>
                 </div>
 
                 <div class="mb-3">
@@ -41,7 +42,10 @@
                     <small class="text-muted">Если оставить пустым — пароль останется прежним.</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                <button type="submit" class="btn btn-primary"
+                        onclick="this.disabled = true; this.innerText = 'Сохраняется…'; this.form.submit();">Сохранить
+                    изменения
+                </button>
             </form>
         </div>
     </div>
