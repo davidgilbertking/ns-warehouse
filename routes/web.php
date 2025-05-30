@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/get-available-quantities', [EventController::class, 'getAvailableQuantities']);
     Route::resource('events', EventController::class)->except(['create']);
 
-    // Продукты
+    // Тэги
     Route::get('/products/{product}/export', [ProductController::class, 'export'])->name('products.export');
     Route::put('/products/{product}/update-items', [ProductController::class, 'updateItems'])->name(
         'products.updateItems'

@@ -15,7 +15,7 @@
             };
         });
     } else if (productItems.length > 0) {
-        // иначе, если выбран продукт
+        // иначе, если выбран тэг
         productItems.forEach(item => {
             selectedItems[item.id] = {
                 id: item.id,

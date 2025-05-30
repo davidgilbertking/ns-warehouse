@@ -41,7 +41,7 @@ class ProductController extends Controller
 
         $this->service->createProduct($dto);
 
-        return redirect()->route('products.index')->with('success', 'Продукт создан!');
+        return redirect()->route('products.index')->with('success', 'Тэг создан!');
     }
 
     public function show(Product $product)
@@ -77,14 +77,14 @@ class ProductController extends Controller
 
         $this->service->updateProduct($product, $dto);
 
-        return redirect()->route('products.show', $product)->with('success', 'Продукт обновлён!');
+        return redirect()->route('products.show', $product)->with('success', 'Тэг обновлён!');
     }
 
     public function destroy(Product $product)
     {
         $this->service->deleteProduct($product);
 
-        return redirect()->route('products.index')->with('success', 'Продукт удалён!');
+        return redirect()->route('products.index')->with('success', 'Тэг удалён!');
     }
 
     public function export(Product $product)

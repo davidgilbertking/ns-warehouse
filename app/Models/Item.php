@@ -54,6 +54,15 @@ class Item extends Model
         return $this->hasMany(Reservation::class);
     }
 
+    public function activeReservations()
+    {
+        return $this->hasMany(Reservation::class)
+                    ->whereNull('deleted_at')
+                    ->whereHas('event', function ($query) {
+                        $query->whereNull('deleted_at');
+                    });
+    }
+
     public function images()
     {
         return $this->hasMany(ItemImage::class);

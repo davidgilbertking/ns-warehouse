@@ -16,7 +16,7 @@
         </div>
     @endif
 
-    <h4>Состав продукта:</h4>
+    <h4>Состав тэга:</h4>
 
     @if ($product->items->isEmpty())
         <div class="alert alert-warning">
