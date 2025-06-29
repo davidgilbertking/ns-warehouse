@@ -20,7 +20,7 @@
         <form method="GET" action="{{ route('items.index') }}">
             <div class="row g-2">
                 <div class="col-12 col-md-6">
-                    <input type="text" name="search" class="form-control" placeholder="Поиск по названию..."
+                    <input type="text" name="search" class="form-control" placeholder="Поиск по тексту..."
                            value="{{ request('search') }}">
                 </div>
                 <div class="col-6 col-md-2">

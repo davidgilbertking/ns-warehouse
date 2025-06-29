@@ -48,7 +48,28 @@ class ItemRepository
                 $q->where('name', 'ILIKE', '%' . $search . '%')
                   ->orWhere('description', 'ILIKE', '%' . $search . '%')
                   ->orWhere('size', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('material', 'ILIKE', '%' . $search . '%');
+                  ->orWhere('material', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('supplier', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('storage_location', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('mechanics', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('scalability', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('branding_options', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('adaptation_options', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('op_price', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('construction_description', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('contractor', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('production_cost', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('change_history', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('consumables', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('implementation_comments', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('mounting', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('storage_features', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('design_links', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('event_history', 'ILIKE', '%' . $search . '%')
+                  ->orWhere('storage_place', 'ILIKE', '%' . $search . '%')
+                  ->orWhereHas('products', function ($q2) use ($search) {
+                      $q2->where('name', 'ILIKE', '%' . $search . '%');
+                  });
             });
         }
 
