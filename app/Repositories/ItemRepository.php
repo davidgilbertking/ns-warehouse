@@ -13,9 +13,9 @@ use Illuminate\Support\Collection;
 
 class ItemRepository
 {
-    public function paginateWithFilters(ItemFilterDTO $filter, int $perPage = 10): LengthAwarePaginator
+    public function paginateWithFilters(ItemFilterDTO $filter, int $perPage = 10, int $depth = 0): LengthAwarePaginator
     {
-        return $this->buildQueryWithFilters($filter)->paginate($perPage);
+        return $this->buildQueryWithFilters($filter, $depth)->paginate($perPage);
     }
 
     public function create(ItemStoreDTO $data): Item
@@ -33,14 +33,15 @@ class ItemRepository
         return $item->delete();
     }
 
-    public function getForExport(ItemFilterDTO $filter): Collection
+    public function getForExport(ItemFilterDTO $filter, int $depth = 0): Collection
     {
-        return $this->buildQueryWithFilters($filter)->get();
+        return $this->buildQueryWithFilters($filter, $depth)->get();
     }
 
-    private function buildQueryWithFilters(ItemFilterDTO $filter): \Illuminate\Database\Eloquent\Builder
+    private function buildQueryWithFilters(ItemFilterDTO $filter, int $depth): \Illuminate\Database\Eloquent\Builder
     {
-        $query = Item::with(['products', 'reservations.event']);
+        $query = Item::with(['products', 'reservations.event'])
+                     ->where('depth', $depth); // Единый источник правды для depth
 
         if ($filter->getSearch()) {
             $search = $filter->getSearch();
@@ -73,7 +74,6 @@ class ItemRepository
             });
         }
 
-        // 🔍 Фильтрация по тэгам (название связанных products)
         if ($filter->getProduct()) {
             $query->whereHas('products', function ($q) use ($filter) {
                 $q->where('name', 'ILIKE', '%' . $filter->getProduct() . '%');

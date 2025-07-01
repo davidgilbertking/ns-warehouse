@@ -37,7 +37,8 @@ readonly class ItemStoreDTO
         private ?array $images = [], // only for store
         private ?array $productIds = [],
         private ?array $videoFiles = [],
-
+        private int $depth = 0,
+        private ?array $subitemIds = [],
     ) {}
 
     public static function fromArray(array $data): self
@@ -67,12 +68,14 @@ readonly class ItemStoreDTO
             $data['design_links'] ?? null,
             $data['event_history'] ?? null,
             $data['storage_place'] ?? null,
-            $data['op_media'] ?? [],
-            $data['real_media'] ?? [],
-            $data['event_media'] ?? [],
+            array_filter($data['op_media'] ?? []),
+            array_filter($data['real_media'] ?? []),
+            array_filter($data['event_media'] ?? []),
             $data['images'] ?? [],
             $data['product_ids'] ?? [],
             $data['videoFiles'] ?? [],
+            $data['depth'] ?? 0,
+            $data['subitem_ids'] ?? [],
 
         );
     }
@@ -109,7 +112,8 @@ readonly class ItemStoreDTO
             'event_media' => $this->eventMedia,
             'product_ids' => $this->productIds,
             'videoFiles' => $this->videoFiles,
-
+            'depth' => $this->depth,
+            'subitem_ids' => $this->subitemIds,
         ];
     }
 
@@ -128,5 +132,14 @@ readonly class ItemStoreDTO
         return $this->videoFiles;
     }
 
+    public function getDepth(): int
+    {
+        return $this->depth;
+    }
+
+    public function getSubitemIds(): array
+    {
+        return $this->subitemIds ?? [];
+    }
 
 }

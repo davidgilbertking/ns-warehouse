@@ -36,6 +36,7 @@ readonly class ItemUpdateDTO
         private ?array $eventMedia = [],
         private ?array $productIds = [],
         private ?array $videoFiles = [],
+        private ?array $subitemIds = [],
     ) {}
 
     public static function fromArray(array $data): self
@@ -70,6 +71,7 @@ readonly class ItemUpdateDTO
             $data['event_media'] ?? [],
             $data['product_ids'] ?? [],
             $data['videoFiles'] ?? [],
+            $data['subitem_ids'] ?? [],
 
         );
     }
@@ -106,6 +108,7 @@ readonly class ItemUpdateDTO
             'event_media' => $this->eventMedia,
             'product_ids' => $this->productIds,
             'videoFiles' => $this->videoFiles,
+            'subitem_ids' => $this->subitemIds,
 
         ];
     }
@@ -118,6 +121,11 @@ readonly class ItemUpdateDTO
     public function getVideoFiles(): ?array
     {
         return $this->videoFiles;
+    }
+
+    public function getSubitemIds(): array
+    {
+        return $this->subitemIds ?? [];
     }
 
 }

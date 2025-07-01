@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Редактировать предмет: {{ $item->name }}</h1>
+    <h1>Редактировать {{ mb_strtolower($entityName) }}: {{ $item->name }}</h1>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -92,8 +92,12 @@
                 <h4 class="mt-4">Общее</h4>
                 @include('items.partials.general-fields-edit')
 
-                <h4 class="mt-4">Для ОП</h4>
+                @if ($item->depth === 0)
+                    @include('items.partials.composition-fields')
+
+                    <h4 class="mt-4">Для ОП</h4>
                 @include('items.partials.op-fields-edit')
+                @endif
 
                 <h4 class="mt-4">Для реализации</h4>
                 @include('items.partials.real-fields-edit')
@@ -139,6 +143,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             $('#product_ids').select2({
                 placeholder: "Выберите тэги",
+                width: '100%'
+            });
+
+            $('#subitem_ids').select2({
+                placeholder: "Выберите предметы для состава",
                 width: '100%'
             });
         });

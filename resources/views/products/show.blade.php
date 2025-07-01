@@ -11,8 +11,8 @@
             @if(auth()->user()->isAdmin())
                 <a href="{{ route('products.edit', $product) }}" class="btn btn-warning">Редактировать тэг</a>
             @endif
-            <a href="{{ route('events.create', ['product_id' => $product->id]) }}" class="btn btn-primary">Создать
-                мероприятие из этого тэга</a>
+{{--            <a href="{{ route('events.create', ['product_id' => $product->id]) }}" class="btn btn-primary">Создать--}}
+{{--                мероприятие из этого тэга</a>--}}
         </div>
     @endif
 
