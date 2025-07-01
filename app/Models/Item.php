@@ -127,7 +127,7 @@ class Item extends Model
             'item_subitem', // название pivot-таблицы
             'item_id',     // текущий ключ
             'subitem_id'   // связанный ключ
-        )->withTimestamps();
+        )->withTimestamps()->withPivot('quantity');
     }
 
     public function parentItems()

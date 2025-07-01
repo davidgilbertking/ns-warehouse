@@ -85,7 +85,12 @@ class ItemController extends Controller
 
         $products = Product::orderBy('name')->get();
         $allSubitems = Item::where('depth', 1)->orderBy('name')->get();
-        $selectedSubitems = $item->subitems()->pluck('items.id')->toArray();
+
+        // Собираем ID и количество из pivot
+        $selectedSubitems = [];
+        foreach ($item->subitems as $subitem) {
+            $selectedSubitems[$subitem->id] = $subitem->pivot->quantity;
+        }
 
         return view('items.edit', compact('item', 'products', 'allSubitems', 'selectedSubitems', 'depth', 'entityName'));
     }
@@ -149,13 +154,35 @@ class ItemController extends Controller
         // Добавляем depth из query-параметра
         $validated['depth'] = (int)$request->get('depth', 0);
 
-        // Создаём DTO через fromArray с добавленным depth
+        // Обработка состава: собираем subitems[ID][selected] + quantity => ID => quantity
+        $subitemsWithQuantities = [];
+        if ($request->filled('subitems')) {
+            foreach ($request->input('subitems') as $subitemId => $subitemData) {
+                if (isset($subitemData['selected']) && $subitemData['selected']) {
+                    $quantity = max(1, (int)($subitemData['quantity'] ?? 1));
+                    $subitemsWithQuantities[$subitemId] = $quantity;
+                }
+            }
+        }
+        $validated['subitems'] = $subitemsWithQuantities;
+
+        // Создаём DTO через fromArray с добавленным depth и подготовленным составом
         return ItemStoreDTO::fromArray($validated);
     }
 
     private function makeUpdateDTO(ItemUpdateRequest $request): ItemUpdateDTO
     {
         $validated = $request->validated();
+
+        $subitemsWithQuantities = [];
+        if ($request->filled('subitems')) {
+            foreach ($request->input('subitems') as $subitemId => $subitemData) {
+                $subitemsWithQuantities[$subitemId] = [
+                    'selected' => isset($subitemData['selected']) && $subitemData['selected'],
+                    'quantity' => max(1, (int)($subitemData['quantity'] ?? 1)),
+                ];
+            }
+        }
 
         return new ItemUpdateDTO(
             name:                    $validated['name'],
@@ -186,7 +213,7 @@ class ItemController extends Controller
             realMedia:               array_filter($validated['real_media'] ?? []),
             eventMedia:              array_filter($validated['event_media'] ?? []),
             productIds:              $validated['product_ids'] ?? [],
-            subitemIds:              $validated['subitem_ids'] ?? [],
+            subitemsWithQuantities:  $subitemsWithQuantities,
         );
     }
 }

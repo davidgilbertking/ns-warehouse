@@ -58,8 +58,9 @@ class ItemUpdateRequest extends FormRequest
             'product_ids' => ['nullable', 'array'],
             'product_ids.*' => ['exists:products,id'],
 
-            'subitem_ids' => ['nullable', 'array'],
-            'subitem_ids.*' => ['exists:items,id'],
+            'subitems' => ['nullable', 'array'],
+            'subitems.*.selected' => ['nullable', 'boolean'],
+            'subitems.*.quantity' => ['nullable', 'integer', 'min:1'],
 
         ];
     }

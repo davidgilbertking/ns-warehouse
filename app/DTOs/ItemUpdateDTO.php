@@ -37,6 +37,8 @@ readonly class ItemUpdateDTO
         private ?array $productIds = [],
         private ?array $videoFiles = [],
         private ?array $subitemIds = [],
+        private ?array $subitemsWithQuantities = [],
+
     ) {}
 
     public static function fromArray(array $data): self
@@ -72,6 +74,7 @@ readonly class ItemUpdateDTO
             $data['product_ids'] ?? [],
             $data['videoFiles'] ?? [],
             $data['subitem_ids'] ?? [],
+            $data['subitems'] ?? [],
 
         );
     }
@@ -126,6 +129,10 @@ readonly class ItemUpdateDTO
     public function getSubitemIds(): array
     {
         return $this->subitemIds ?? [];
+    }
+    public function getSubitemsWithQuantities(): array
+    {
+        return $this->subitemsWithQuantities ?? [];
     }
 
 }

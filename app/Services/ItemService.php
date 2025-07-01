@@ -65,7 +65,6 @@ class ItemService
     {
         $item = $this->repository->create($data);
 
-        // Загружаем изображения, если есть
         if (!empty($data->getImages())) {
             $this->imageService->uploadImages($item, $data->getImages());
         }
@@ -76,8 +75,15 @@ class ItemService
 
         $item->products()->sync($data->getProductIds());
 
-        if (!empty($data->getSubitemIds())) {
-            $item->subitems()->sync($data->getSubitemIds());
+        if (!empty($data->getSubitemsWithQuantities())) {
+            $subitemsToSync = [];
+            foreach ($data->getSubitemsWithQuantities() as $subitemId => $details) {
+                if (isset($details['selected']) && $details['selected']) {
+                    $quantity = isset($details['quantity']) ? max(1, (int)$details['quantity']) : 1;
+                    $subitemsToSync[$subitemId] = ['quantity' => $quantity];
+                }
+            }
+            $item->subitems()->sync($subitemsToSync);
         }
 
         $this->logAction('created_item', $item);
@@ -95,10 +101,19 @@ class ItemService
 
         $item->products()->sync($data->getProductIds());
 
-        if (!empty($data->getSubitemIds())) {
-            $item->subitems()->sync($data->getSubitemIds());
+        if (!empty($data->getSubitemsWithQuantities())) {
+            $subitemsToSync = [];
+
+            foreach ($data->getSubitemsWithQuantities() as $subitemId => $details) {
+                if (isset($details['selected']) && $details['selected']) {
+                    $quantity = isset($details['quantity']) ? max(1, (int)$details['quantity']) : 1;
+                    $subitemsToSync[$subitemId] = ['quantity' => $quantity];
+                }
+            }
+
+            $item->subitems()->sync($subitemsToSync);
         } else {
-            $item->subitems()->detach(); // Если не пришли subitems, очищаем связь
+            $item->subitems()->detach();
         }
 
         if ($result) {
