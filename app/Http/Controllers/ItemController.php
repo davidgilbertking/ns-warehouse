@@ -119,8 +119,13 @@ class ItemController extends Controller
             return back()->with('error', "Нельзя удалить {$entityName}, к которому привязан тэг.");
         }
 
-        if ($item->parentItems()->exists()) {
+        if ($item->depth === 1 && $item->parentItems()->exists()) {
             return back()->with('error', 'Нельзя удалить предмет, который используется в заданиях.');
+        }
+
+        if ($item->depth === 0) {
+            // Если это задание, удаляем его связи с предметами
+            $item->subitems()->detach();
         }
 
         $this->service->deleteItem($item);
@@ -154,13 +159,16 @@ class ItemController extends Controller
         // Добавляем depth из query-параметра
         $validated['depth'] = (int)$request->get('depth', 0);
 
-        // Обработка состава: собираем subitems[ID][selected] + quantity => ID => quantity
+        // Обработка состава: собираем ID => ['selected' => 1, 'quantity' => N]
         $subitemsWithQuantities = [];
         if ($request->filled('subitems')) {
             foreach ($request->input('subitems') as $subitemId => $subitemData) {
                 if (isset($subitemData['selected']) && $subitemData['selected']) {
                     $quantity = max(1, (int)($subitemData['quantity'] ?? 1));
-                    $subitemsWithQuantities[$subitemId] = $quantity;
+                    $subitemsWithQuantities[$subitemId] = [
+                        'selected' => 1,
+                        'quantity' => $quantity,
+                    ];
                 }
             }
         }
