@@ -7,6 +7,9 @@
                 <a href="{{ route('items.show', $subitem) }}">
                     {{ $subitem->name }}
                 </a>
+                <span class="badge bg-secondary ms-2">
+                    × {{ $subitem->pivot->quantity }}
+                </span>
             </li>
         @endforeach
     </ul>

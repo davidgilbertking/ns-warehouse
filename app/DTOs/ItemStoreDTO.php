@@ -39,6 +39,8 @@ readonly class ItemStoreDTO
         private ?array $videoFiles = [],
         private int $depth = 0,
         private ?array $subitemIds = [],
+        private ?array $subitemsWithQuantities = [],
+
     ) {}
 
     public static function fromArray(array $data): self
@@ -76,6 +78,7 @@ readonly class ItemStoreDTO
             $data['videoFiles'] ?? [],
             $data['depth'] ?? 0,
             $data['subitem_ids'] ?? [],
+            $data['subitems'] ?? [],
 
         );
     }
@@ -140,6 +143,10 @@ readonly class ItemStoreDTO
     public function getSubitemIds(): array
     {
         return $this->subitemIds ?? [];
+    }
+    public function getSubitemsWithQuantities(): array
+    {
+        return $this->subitemsWithQuantities ?? [];
     }
 
 }
