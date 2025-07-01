@@ -41,6 +41,7 @@ class Item extends Model
         'op_media',
         'real_media',
         'event_media',
+        'depth',
     ];
 
     protected $casts = [
@@ -117,5 +118,25 @@ class Item extends Model
                 $video->delete();
             }
         });
+    }
+
+    public function subitems()
+    {
+        return $this->belongsToMany(
+            Item::class, // к чему связываемся — сами Items
+            'item_subitem', // название pivot-таблицы
+            'item_id',     // текущий ключ
+            'subitem_id'   // связанный ключ
+        )->withTimestamps();
+    }
+
+    public function parentItems()
+    {
+        return $this->belongsToMany(
+            Item::class,
+            'item_subitem',
+            'subitem_id', // текущий ключ
+            'item_id'     // связанный ключ
+        )->withTimestamps();
     }
 }

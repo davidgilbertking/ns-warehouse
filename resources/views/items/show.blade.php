@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>{{ $item->name }}</h1>
+    <h1>{{ $entityName }}: {{ $item->name }}</h1>
 
     @if(!auth()->user()->isViewer() && !auth()->user()->isGuest())
         <a href="{{ route('items.edit', $item) }}" class="btn btn-warning mb-3">Редактировать</a>
@@ -33,8 +33,14 @@
 
     <h4>Общее</h4>
     @include('items.partials.general-show')
+
+    @if ($item->depth === 0)
+    @include('items.partials.composition-show')
+    @endif
+
     @if (!auth()->user()?->isGuest())
     <div class="accordion mb-3" id="accordionSections">
+        @if ($item->depth === 0)
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOp">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOp" aria-expanded="false" aria-controls="collapseOp">
@@ -47,6 +53,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingReal">

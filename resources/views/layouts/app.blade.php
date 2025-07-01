@@ -82,9 +82,19 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                @php
+                    $currentDepth = isset($depth) ? $depth : (int) request()->get('depth', 0);
+                @endphp
+
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('items.*') ? 'active' : '' }}"
+                    <a class="nav-link {{ request()->routeIs('items.*') && $currentDepth === 0 ? 'active' : '' }}"
                        href="{{ route('items.index') }}">
+                        Задания
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('items.*') && $currentDepth === 1 ? 'active' : '' }}"
+                       href="{{ route('items.index', ['depth' => 1]) }}">
                         Предметы
                     </a>
                 </li>
@@ -94,12 +104,12 @@
                         Тэги
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}"
-                       href="{{ route('events.index') }}">
-                        Мероприятия
-                    </a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}"--}}
+{{--                       href="{{ route('events.index') }}">--}}
+{{--                        Мероприятия--}}
+{{--                    </a>--}}
+{{--                </li>--}}
 
                 @auth
                     @if (auth()->user()->isAdmin())

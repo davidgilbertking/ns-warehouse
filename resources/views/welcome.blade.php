@@ -7,7 +7,7 @@
             Здесь вы можете управлять складом, мероприятиями и тэгами быстро и удобно.
         </p>
         <a href="{{ route('items.index') }}" class="btn btn-primary btn-lg mt-4 fade-in" style="animation-delay: 1s;">
-            Перейти в Каталог предметов
+            Перейти в Каталог
         </a>
     </div>
 @endsection

@@ -12,9 +12,11 @@
         </div>
     @endif
     @can('create', App\Models\Item::class)
-        <a href="{{ route('items.create') }}" class="btn btn-success  mb-3">Создать предмет</a>
+        <a href="{{ route('items.create', ['depth' => $depth]) }}" class="btn btn-success mb-3">
+            Создать {{ mb_strtolower($entityName) }}
+        </a>
     @endcan
-    <h1>Каталог предметов</h1>
+    <h1>Каталог: {{ mb_strtolower($entityNamePlural) }}</h1>
 
     <div class="mb-3">
         <form method="GET" action="{{ route('items.index') }}">
@@ -49,7 +51,7 @@
 
     @can('create', App\Models\Item::class)
         <a href="{{ route('items.export', request()->only('search', 'available_from', 'available_to', 'product')) }}"
-           class="btn btn-info mb-3">Экспортировать список предметов в CSV</a>
+           class="btn btn-info mb-3">Экспортировать список в CSV</a>
     @endcan
     @if ($items->isEmpty())
         <div class="alert alert-warning">

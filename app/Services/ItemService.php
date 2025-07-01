@@ -23,7 +23,7 @@ class ItemService
     ) {
     }
 
-    public function getPaginatedItems(ItemFilterDTO $filter, int $perPage = 10): LengthAwarePaginator
+    public function getPaginatedItems(ItemFilterDTO $filter, int $depth, int $perPage = 10): LengthAwarePaginator
     {
         $availableFrom = $filter->getAvailableFrom();
         $availableTo = $filter->getAvailableTo();
@@ -32,7 +32,7 @@ class ItemService
             throw new \InvalidArgumentException('Дата "От" не может быть позже даты "До".');
         }
 
-        $items = $this->repository->paginateWithFilters($filter, $perPage);
+        $items = $this->repository->paginateWithFilters($filter, $perPage, $depth);
 
         if ($availableFrom && $availableTo) {
             foreach ($items as $item) {
@@ -76,6 +76,10 @@ class ItemService
 
         $item->products()->sync($data->getProductIds());
 
+        if (!empty($data->getSubitemIds())) {
+            $item->subitems()->sync($data->getSubitemIds());
+        }
+
         $this->logAction('created_item', $item);
 
         return $item;
@@ -90,6 +94,12 @@ class ItemService
         }
 
         $item->products()->sync($data->getProductIds());
+
+        if (!empty($data->getSubitemIds())) {
+            $item->subitems()->sync($data->getSubitemIds());
+        } else {
+            $item->subitems()->detach(); // Если не пришли subitems, очищаем связь
+        }
 
         if ($result) {
             $this->logAction('updated_item', $item);
