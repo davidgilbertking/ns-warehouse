@@ -20,6 +20,7 @@
 
     <div class="mb-3">
         <form method="GET" action="{{ route('items.index') }}">
+            <input type="hidden" name="depth" value="{{ $depth }}">
             <div class="row g-2">
                 <div class="col-12 col-md-6">
                     <input type="text" name="search" class="form-control" placeholder="Поиск по тексту..."
