@@ -125,7 +125,7 @@ class ItemController extends Controller
 
         $this->service->deleteItem($item);
 
-        return redirect()->route('items.index')->with('success', "Удалено: {$entityName}");
+        return redirect()->route('items.index', ['depth' => $item->depth])->with('success', "Удалено: {$entityName}");
     }
 
     public function export(Request $request)
