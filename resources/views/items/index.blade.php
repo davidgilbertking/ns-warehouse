@@ -119,7 +119,7 @@
                 </tbody>
             </table>
         </div>
-        {{ $items->links() }}
+        {{ $items->appends(request()->query())->links() }}
     @endif
 
     @include('partials.delete-modal')
