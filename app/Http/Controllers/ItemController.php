@@ -51,8 +51,8 @@ class ItemController extends Controller
         $entityName = $depth === 1 ? 'Предмет' : 'Задание';
 
         $products = Product::orderBy('name')->get();
-        $allSubitems = Item::where('depth', 1)->orderBy('name')->get();
-        return view('items.create', compact('products', 'depth', 'allSubitems', 'entityName'));
+
+        return view('items.create', compact('products', 'depth', 'entityName'));
     }
 
     public function store(ItemStoreRequest $request)
