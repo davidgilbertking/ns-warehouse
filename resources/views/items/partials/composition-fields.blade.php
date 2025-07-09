@@ -1,25 +1,30 @@
 <h4 class="mt-4">Состав</h4>
+
 <div class="mb-3">
-    @foreach ($allSubitems as $subitem)
-        <div class="mb-2 border rounded p-2">
-            <div class="form-check">
-                <input class="form-check-input"
-                       type="checkbox"
-                       name="subitems[{{ $subitem->id }}][selected]"
-                       value="1"
-                       id="subitem_{{ $subitem->id }}"
-                    {{ (old('subitems.' . $subitem->id . '.selected') || (isset($selectedSubitems) && array_key_exists($subitem->id, $selectedSubitems))) ? 'checked' : '' }}>                <label class="form-check-label" for="subitem_{{ $subitem->id }}">
-                    {{ $subitem->name }}
-                </label>
+    <label for="subitem-selector" class="form-label">Добавить предмет в состав:</label>
+    <select id="subitem-selector" class="form-control" style="width: 100%;"></select>
+</div>
+
+<div id="subitems-container" class="mb-3">
+    {{-- Уже выбранные предметы будут отображаться здесь --}}
+    @if (isset($selectedSubitems) && $selectedSubitems->count())
+        @foreach ($selectedSubitems as $subitem)
+            <div class="subitem-entry border rounded p-2 mb-2" data-id="{{ $subitem->id }}">
+                <input type="hidden" name="subitems[{{ $subitem->id }}][selected]" value="1">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ $subitem->name }}</strong>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-subitem">Удалить</button>
+                </div>
+                <div class="mt-2">
+                    <label class="form-label small">Количество:</label>
+                    <input type="number" name="subitems[{{ $subitem->id }}][quantity]"
+                           class="form-control"
+                           min="1"
+                           value="{{ $subitem->pivot->quantity }}">
+                </div>
             </div>
-            <div class="mt-2">
-                <label for="subitem_quantity_{{ $subitem->id }}" class="form-label small">Количество:</label>
-                <input type="number"
-                       class="form-control"
-                       min="1"
-                       name="subitems[{{ $subitem->id }}][quantity]"
-                       id="subitem_quantity_{{ $subitem->id }}"
-                       value="{{ old('subitems.' . $subitem->id . '.quantity', $selectedSubitems[$subitem->id] ?? 1) }}">            </div>
-        </div>
-    @endforeach
+        @endforeach
+    @endif
 </div>

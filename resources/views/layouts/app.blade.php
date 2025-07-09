@@ -217,6 +217,65 @@
             }
         });
     });
+
+    $(document).ready(function () {
+        $('#subitem-selector').select2({
+            placeholder: 'Поиск предметов...',
+            ajax: {
+                url: '{{ route('api.items.search-subitems') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term // текст запроса
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return {
+                                id: item.id,
+                                text: item.name
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 1
+        });
+
+        $('#subitem-selector').on('select2:select', function (e) {
+            const id = e.params.data.id;
+            const name = e.params.data.text;
+
+            if ($('#subitems-container .subitem-entry[data-id="' + id + '"]').length > 0) {
+                return;
+            }
+
+            const html = `
+                <div class="subitem-entry border rounded p-2 mb-2" data-id="${id}">
+                    <input type="hidden" name="subitems[${id}][selected]" value="1">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div><strong>${name}</strong></div>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-subitem">Удалить</button>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label small">Количество:</label>
+                        <input type="number" name="subitems[${id}][quantity]"
+                               class="form-control"
+                               min="1"
+                               value="1">
+                    </div>
+                </div>
+            `;
+            $('#subitems-container').append(html);
+        });
+
+        $(document).on('click', '.remove-subitem', function () {
+            $(this).closest('.subitem-entry').remove();
+        });
+    });
 </script>
 
 @yield('scripts')
