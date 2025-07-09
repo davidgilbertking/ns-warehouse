@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/items/images/{image}', [ItemImageController::class, 'destroy'])->name('items.images.destroy');
     Route::post('/items/{item}/images', [ItemImageController::class, 'store'])->name('items.images.store');
     Route::resource('items', ItemController::class);
+    Route::get('/api/subitems/search', [ItemController::class, 'searchSubitems'])
+         ->name('api.items.search-subitems');
 
     // Видео для предметов
     Route::post('/items/{item}/videos', [ItemVideoController::class, 'store'])->name('items.videos.store');

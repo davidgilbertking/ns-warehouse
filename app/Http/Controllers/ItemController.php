@@ -80,19 +80,16 @@ class ItemController extends Controller
     public function edit(Item $item)
     {
         $this->authorizeAction();
+
         $depth = $item->depth;
         $entityName = $depth === 1 ? 'Предмет' : 'Задание';
 
         $products = Product::orderBy('name')->get();
-        $allSubitems = Item::where('depth', 1)->orderBy('name')->get();
 
-        // Собираем ID и количество из pivot
-        $selectedSubitems = [];
-        foreach ($item->subitems as $subitem) {
-            $selectedSubitems[$subitem->id] = $subitem->pivot->quantity;
-        }
+        // Получаем выбранные предметы с pivot-данными (quantity)
+        $selectedSubitems = $item->subitems()->withPivot('quantity')->get();
 
-        return view('items.edit', compact('item', 'products', 'allSubitems', 'selectedSubitems', 'depth', 'entityName'));
+        return view('items.edit', compact('item', 'products', 'selectedSubitems', 'depth', 'entityName'));
     }
 
     public function update(ItemUpdateRequest $request, Item $item)
@@ -223,5 +220,18 @@ class ItemController extends Controller
             productIds:              $validated['product_ids'] ?? [],
             subitemsWithQuantities:  $subitemsWithQuantities,
         );
+    }
+
+    public function searchSubitems(Request $request)
+    {
+        $query = $request->get('q');
+
+        $subitems = Item::where('depth', 1)
+                        ->when($query, fn($q) => $q->where('name', 'ilike', "%{$query}%"))
+                        ->orderBy('name')
+                        ->limit(20)
+                        ->get(['id', 'name']);
+
+        return response()->json($subitems);
     }
 }
