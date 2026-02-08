@@ -11,7 +11,13 @@
         <div class="row">
             @foreach ($item->images as $image)
                 <div class="col-md-3 mb-3">
-                    <img src="{{ asset('storage/' . $image->path) }}" alt="Фото" class="img-fluid rounded zoomable-image" style="cursor: zoom-in;">
+                    <img
+                        src="{{ asset('storage/' . ($image->thumb_path ?? $image->path)) }}"
+                        data-full="{{ asset('storage/' . $image->path) }}"
+                        alt="Фото"
+                        class="img-fluid rounded zoomable-image"
+                        style="cursor: zoom-in;"
+                    >
                 </div>
             @endforeach
         </div>
@@ -102,7 +108,7 @@
                 img.addEventListener('click', function () {
                     const modal = document.getElementById('imageModal');
                     const modalImg = document.getElementById('modalImage');
-                    modalImg.src = this.src;
+                    modalImg.src = this.dataset.full || this.src;
                     const modalInstance = new bootstrap.Modal(modal);
                     modalInstance.show();
                 });
