@@ -47,7 +47,7 @@ class ItemStoreRequest extends FormRequest
 
             // Массивы файлов или ссылок
             'images' => ['nullable', 'array'],
-            'images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
+            'images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:51200'],
 
             'op_media' => ['nullable', 'array'],
             'op_media.*' => ['nullable', 'string'], // ссылки на медиа

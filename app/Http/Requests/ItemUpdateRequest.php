@@ -44,7 +44,7 @@ class ItemUpdateRequest extends FormRequest
             'design_links' => ['nullable', 'string'],
             'event_history' => ['nullable', 'string'],
 
-            'images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
+            'images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:51200'],
 
             'op_media' => ['nullable', 'array'],
             'op_media.*' => ['nullable', 'string'],

@@ -17,7 +17,7 @@ class ItemVideoStoreRequest extends FormRequest
     {
         return [
             'videos' => ['required', 'array'],
-            'videos.*' => ['file', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime', 'max:51200'], // 50MB
+            'videos.*' => ['file', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime', 'max:102400'], // 100MB
         ];
     }
 }
