@@ -53,5 +53,5 @@
 
 <div class="mb-3">
     <label for="design_links" class="form-label">Ссылка на макеты/исходники</label>
-    <input type="text" id="design_links" name="design_links" class="form-control">
+    <textarea id="design_links" name="design_links" class="form-control" rows="2"></textarea>
 </div>

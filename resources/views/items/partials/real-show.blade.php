@@ -46,5 +46,15 @@
 @endif
 
 @if ($item->design_links)
-    <p><strong>Ссылка на макеты/исходники:</strong> <a href="{{ $item->design_links }}" target="_blank">{{ $item->design_links }}</a></p>
+    <p><strong>Ссылка на макеты/исходники:</strong><br>
+        @php
+            $linkIndex = 0;
+            $text = e($item->design_links);
+            $text = preg_replace_callback('/(https?:\/\/[^\s<]+)/', function ($matches) use (&$linkIndex) {
+                $linkIndex++;
+                return '<a href="' . $matches[1] . '" target="_blank">Ссылка ' . $linkIndex . '</a>';
+            }, $text);
+        @endphp
+        {!! nl2br($text) !!}
+    </p>
 @endif

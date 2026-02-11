@@ -57,5 +57,5 @@
 
 <div class="mb-3">
     <label for="design_links" class="form-label">Ссылка на макеты/исходники</label>
-    <input type="text" id="design_links" name="design_links" class="form-control" value="{{ old('design_links', $item->design_links) }}">
+    <textarea id="design_links" name="design_links" class="form-control" rows="2">{{ old('design_links', $item->design_links) }}</textarea>
 </div>
