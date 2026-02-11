@@ -6,8 +6,8 @@
     <div class="mb-3">
         <strong>Медиа с мероприятий:</strong>
         <ul class="mb-0">
-            @foreach ($item->event_media as $media)
-                <li><a href="{{ $media }}" target="_blank" style="word-break: break-all;">{{ $media }}</a></li>
+            @foreach ($item->event_media as $index => $media)
+                <li><a href="{{ $media }}" target="_blank">Ссылка {{ $index + 1 }}</a></li>
             @endforeach
         </ul>
     </div>
