@@ -1,9 +1,9 @@
 @if ($item->description)
-    <p><strong>Описание:</strong> {{ $item->description }}</p>
+    <p><strong>Описание:</strong><br>{!! nl2br(e($item->description)) !!}</p>
 @endif
 
 @if ($item->mechanics)
-    <p><strong>Механика проведения:</strong> {{ $item->mechanics }}</p>
+    <p><strong>Механика проведения:</strong><br>{!! nl2br(e($item->mechanics)) !!}</p>
 @endif
 
 @if ($item->size)
@@ -15,7 +15,7 @@
 @endif
 
 @if ($item->scalability)
-    <p><strong>Проходимость и масштабирование:</strong> {{ $item->scalability }}</p>
+    <p><strong>Проходимость и масштабирование:</strong><br>{!! nl2br(e($item->scalability)) !!}</p>
 @endif
 
 @if ($item->client_price)

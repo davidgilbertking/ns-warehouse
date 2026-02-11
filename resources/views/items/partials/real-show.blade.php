@@ -10,7 +10,7 @@
 @endif
 
 @if ($item->construction_description)
-    <p><strong>Описание материалов и конструкции:</strong> {{ $item->construction_description }}</p>
+    <p><strong>Описание материалов и конструкции:</strong><br>{!! nl2br(e($item->construction_description)) !!}</p>
 @endif
 
 @if ($item->contractor)
@@ -22,23 +22,23 @@
 @endif
 
 @if ($item->change_history)
-    <p><strong>История изменений:</strong> {{ $item->change_history }}</p>
+    <p><strong>История изменений:</strong><br>{!! nl2br(e($item->change_history)) !!}</p>
 @endif
 
 @if ($item->consumables)
-    <p><strong>Расходники:</strong> {{ $item->consumables }}</p>
+    <p><strong>Расходники:</strong><br>{!! nl2br(e($item->consumables)) !!}</p>
 @endif
 
 @if ($item->implementation_comments)
-    <p><strong>Доп. комментарии:</strong> {{ $item->implementation_comments }}</p>
+    <p><strong>Доп. комментарии:</strong><br>{!! nl2br(e($item->implementation_comments)) !!}</p>
 @endif
 
 @if ($item->mounting)
-    <p><strong>Монтаж/демонтаж:</strong> {{ $item->mounting }}</p>
+    <p><strong>Монтаж/демонтаж:</strong><br>{!! nl2br(e($item->mounting)) !!}</p>
 @endif
 
 @if ($item->storage_features)
-    <p><strong>Особенности хранения и транспортировки:</strong> {{ $item->storage_features }}</p>
+    <p><strong>Особенности хранения и транспортировки:</strong><br>{!! nl2br(e($item->storage_features)) !!}</p>
 @endif
 
 @if ($item->storage_place)

@@ -1,5 +1,5 @@
 @if ($item->event_history)
-    <p><strong>История проведения:</strong><br>{{ nl2br(e($item->event_history)) }}</p>
+    <p><strong>История проведения:</strong><br>{!! nl2br(e($item->event_history)) !!}</p>
 @endif
 
 @if (!empty($item->event_media))

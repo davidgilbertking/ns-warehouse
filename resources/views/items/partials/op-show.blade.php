@@ -10,11 +10,11 @@
 @endif
 
 @if ($item->branding_options)
-    <p><strong>Варианты брендинга:</strong> {{ $item->branding_options }}</p>
+    <p><strong>Варианты брендинга:</strong><br>{!! nl2br(e($item->branding_options)) !!}</p>
 @endif
 
 @if ($item->adaptation_options)
-    <p><strong>Варианты адаптации:</strong> {{ $item->adaptation_options }}</p>
+    <p><strong>Варианты адаптации:</strong><br>{!! nl2br(e($item->adaptation_options)) !!}</p>
 @endif
 
 @if ($item->op_price)
