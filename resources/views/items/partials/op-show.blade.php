@@ -3,7 +3,7 @@
         <strong>Медиа:</strong>
         <ul class="mb-0">
             @foreach ($item->op_media as $media)
-                <li><a href="{{ $media }}" target="_blank">{{ $media }}</a></li>
+                <li><a href="{{ $media }}" target="_blank" style="word-break: break-all;">{{ $media }}</a></li>
             @endforeach
         </ul>
     </div>
