@@ -20,7 +20,12 @@
             <div>
                 <a href="/">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('assets/brand/favicon.ico') }}" alt="Warehouse" width="64" height="64">
+                        <img
+                            src="{{ app()->environment('production') ? asset('assets/brand/favicon.ico') : asset('assets/brand/logo.svg') }}"
+                            alt="Warehouse"
+                            width="64"
+                            height="64"
+                        />
                     </div>
                 </a>
             </div>
