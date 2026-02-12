@@ -17,7 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/brand/logo.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/brand/favicon.ico') }}">
 
     <style>
         .nav-link.active {
