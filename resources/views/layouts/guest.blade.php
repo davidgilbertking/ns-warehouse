@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>NS Warehouse</title>
+        <link rel="icon" type="image/svg+xml" href="{{ asset('assets/brand/logo.svg') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -19,7 +20,7 @@
             <div>
                 <a href="/">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('favicon.ico') }}" alt="Night Street" width="64" height="64">
+                        <img src="{{ asset('assets/brand/logo.svg') }}" alt="Warehouse" width="64" height="64">
                     </div>
                 </a>
             </div>
