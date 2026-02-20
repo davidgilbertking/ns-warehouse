@@ -93,7 +93,11 @@
     <!-- Модалка для увеличения -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content bg-transparent border-0">
+            <div class="modal-content bg-transparent border-0 position-relative">
+                <button type="button" data-bs-dismiss="modal" aria-label="Close"
+                    style="position:absolute;top:-12px;right:-12px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.8);color:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                    &times;
+                </button>
                 <img id="modalImage" class="img-fluid rounded shadow">
             </div>
         </div>
