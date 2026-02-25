@@ -41,7 +41,7 @@ class ItemRepository
     private function buildQueryWithFilters(ItemFilterDTO $filter, int $depth): \Illuminate\Database\Eloquent\Builder
     {
         $query = Item::with(['products', 'reservations.event'])
-                     ->where('depth', $depth); // Единый источник правды для depth
+                     ->where('depth', $depth);
 
         if ($filter->getSearch()) {
             $search = $filter->getSearch();
@@ -78,6 +78,10 @@ class ItemRepository
             $query->whereHas('products', function ($q) use ($filter) {
                 $q->where('name', 'ILIKE', '%' . $filter->getProduct() . '%');
             });
+        }
+
+        if ($filter->getStoragePlace()) {
+            $query->where('storage_place', 'ILIKE', '%' . $filter->getStoragePlace() . '%');
         }
 
         $query->orderBy('name', 'asc');

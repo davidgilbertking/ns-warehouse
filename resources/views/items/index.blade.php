@@ -37,21 +37,25 @@
                            value="{{ request('available_to') }}" autocomplete="off">
                 </div>
                 <div class="col-6 col-md-1 d-grid">
-                    <a href="{{ route('items.index') }}" class="btn btn-secondary">Очистить</a>
+                    <a href="{{ route('items.index', ['depth' => $depth]) }}" class="btn btn-secondary">Очистить</a>
                 </div>
                 <div class="col-6 col-md-1 d-grid">
-                    <button type="submit" class="btn btn-primary">Фильтр</button>
+                    <button type="submit" class="btn btn-primary">Искать</button>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                     <input type="text" name="product" class="form-control" placeholder="Поиск по тэгам..."
                            value="{{ request('product') }}">
+                </div>
+                <div class="col-12 col-md-3">
+                    <input type="text" name="storage_place" class="form-control" placeholder="Поиск по месту..."
+                           value="{{ request('storage_place') }}">
                 </div>
             </div>
         </form>
     </div>
 
     @can('create', App\Models\Item::class)
-        <a href="{{ route('items.export', request()->only('search', 'available_from', 'available_to', 'product')) }}"
+        <a href="{{ route('items.export', request()->only('search', 'available_from', 'available_to', 'product', 'storage_place')) }}"
            class="btn btn-info mb-3">Экспортировать список в CSV</a>
     @endcan
     @if ($items->isEmpty())
@@ -65,6 +69,7 @@
                 <tr>
                     <th>Название</th>
                     <th>Описание</th>
+                    <th>Место</th>
                     <th>Тэги</th>
                     <th>Количество всего</th>
                     @if (request()->filled('available_from') && request()->filled('available_to'))
@@ -86,6 +91,7 @@
                                 </a>
                             </td>
                             <td>{{ $item->description }}</td>
+                            <td>{{ $item->storage_place }}</td>
                             <td>
                                 @if ($item->products->isNotEmpty())
                                     {{ $item->products->pluck('name')->implode(', ') }}

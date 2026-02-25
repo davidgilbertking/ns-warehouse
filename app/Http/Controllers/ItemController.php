@@ -153,10 +153,8 @@ class ItemController extends Controller
     {
         $validated = $request->validated();
 
-        // Добавляем depth из query-параметра
         $validated['depth'] = (int)$request->get('depth', 0);
 
-        // Обработка состава: собираем ID => ['selected' => 1, 'quantity' => N]
         $subitemsWithQuantities = [];
         if ($request->filled('subitems')) {
             foreach ($request->input('subitems') as $subitemId => $subitemData) {
@@ -171,7 +169,6 @@ class ItemController extends Controller
         }
         $validated['subitems'] = $subitemsWithQuantities;
 
-        // Создаём DTO через fromArray с добавленным depth и подготовленным составом
         return ItemStoreDTO::fromArray($validated);
     }
 

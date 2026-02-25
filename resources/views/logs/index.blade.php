@@ -26,7 +26,7 @@
         </div>
         <div class="col-12 col-md-2 d-flex gap-2">
             <a href="{{ route('logs.index') }}" class="btn btn-secondary w-50">Очистить</a>
-            <button type="submit" class="btn btn-primary w-50">Фильтр</button>
+            <button type="submit" class="btn btn-primary w-50">Искать</button>
         </div>
     </form>
 

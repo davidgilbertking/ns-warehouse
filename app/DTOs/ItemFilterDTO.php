@@ -11,7 +11,8 @@ readonly class ItemFilterDTO
         private ?string $availableFrom = null,
         private ?string $availableTo = null,
         private ?string $product = null,
-        private ?int $depth = null, // ⬅️ добавляем поле для depth
+        private ?int $depth = null,
+        private ?string $storagePlace = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -21,7 +22,8 @@ readonly class ItemFilterDTO
             $data['available_from'] ?? null,
             $data['available_to'] ?? null,
             $data['product'] ?? null,
-            isset($data['depth']) ? (int)$data['depth'] : null, // ⬅️ парсим depth из запроса
+            isset($data['depth']) ? (int)$data['depth'] : null,
+            $data['storage_place'] ?? null,
         );
     }
 
@@ -48,5 +50,10 @@ readonly class ItemFilterDTO
     public function getDepth(): ?int
     {
         return $this->depth;
+    }
+
+    public function getStoragePlace(): ?string
+    {
+        return $this->storagePlace;
     }
 }

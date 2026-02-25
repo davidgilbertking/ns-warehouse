@@ -52,7 +52,7 @@
                     </div>
                     <div class="col-6 col-md-1 d-grid">
                         <input type="hidden" name="show_archive" value="{{ request('show_archive') ? 1 : 0 }}">
-                        <button type="submit" class="btn btn-primary">Фильтр</button>
+                        <button type="submit" class="btn btn-primary">Искать</button>
                     </div>
                 </div>
             </form>
