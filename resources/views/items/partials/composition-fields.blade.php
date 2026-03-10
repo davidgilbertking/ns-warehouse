@@ -1,7 +1,7 @@
-<h4 class="mt-4">Состав</h4>
+<h4 class="mt-4">Предметы</h4>
 
 <div class="mb-3">
-    <label for="subitem-selector" class="form-label">Добавить предмет в состав:</label>
+    <label for="subitem-selector" class="form-label">Добавить предмет:</label>
     <select id="subitem-selector" class="form-control" style="width: 100%;"></select>
 </div>
 

@@ -1,4 +1,4 @@
-<h4 class="mt-4">Состав</h4>
+<h4 class="mt-4">Предметы</h4>
 
 @if ($item->subitems->count())
     <ul class="list-group mb-3">
@@ -14,5 +14,5 @@
         @endforeach
     </ul>
 @else
-    <p class="text-muted">Состав не указан.</p>
+    <p class="text-muted">Предметы не указаны.</p>
 @endif

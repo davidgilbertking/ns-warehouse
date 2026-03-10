@@ -44,6 +44,10 @@
     @include('items.partials.composition-show')
     @endif
 
+    @if ($item->depth === 1)
+    @include('items.partials.parent-items-show')
+    @endif
+
     @if (!auth()->user()?->isGuest())
     <div class="accordion mb-3" id="accordionSections">
         @if ($item->depth === 0)

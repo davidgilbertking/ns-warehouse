@@ -64,7 +64,7 @@
             });
 
             $('#subitem_ids').select2({
-                placeholder: "Выберите предметы для состава",
+                placeholder: "Выберите предметы",
                 width: '100%'
             });
         });

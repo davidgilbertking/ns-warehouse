@@ -74,6 +74,9 @@ class ItemController extends Controller
         $entityName = $depth === 1 ? 'Предмет' : 'Задание';
 
         $item->load('subitems');
+        if ($depth === 1) {
+            $item->load('parentItems');
+        }
         return view('items.show', compact('item', 'depth', 'entityName'));
     }
 

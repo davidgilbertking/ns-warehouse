@@ -25,6 +25,10 @@
             color: #0d6efd;
         }
 
+        .container {
+            overflow-wrap: break-word;
+        }
+
         /* Select2 под Bootstrap 5 */
         .select2-container--default .select2-selection--multiple {
             background-color: var(--bs-body-bg);
