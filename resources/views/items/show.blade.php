@@ -92,7 +92,14 @@
         </div>
     </div>
     @endif
-    <a href="{{ route('items.index') }}" class="btn btn-secondary mt-3">Назад</a>
+    <button
+        type="button"
+        id="history-back-button"
+        class="btn btn-secondary mt-3"
+        data-fallback-url="{{ route('items.index', ['depth' => $item->depth]) }}"
+    >
+        Назад
+    </button>
 
     <!-- Модалка для увеличения -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
@@ -102,7 +109,12 @@
                     style="position:absolute;top:-12px;right:-12px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.8);color:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;">
                     &times;
                 </button>
-                <img id="modalImage" class="img-fluid rounded shadow">
+                <img
+                    id="modalImage"
+                    class="img-fluid rounded shadow"
+                    alt="Увеличенное фото предмета"
+                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                >
             </div>
         </div>
     </div>
@@ -121,6 +133,21 @@
                     modalInstance.show();
                 });
             });
+
+            const historyBackButton = document.getElementById('history-back-button');
+            if (historyBackButton) {
+                historyBackButton.addEventListener('click', function () {
+                    const fallbackUrl = this.dataset.fallbackUrl;
+                    const hasInternalReferrer = document.referrer && document.referrer.startsWith(window.location.origin);
+
+                    if (hasInternalReferrer && window.history.length > 1) {
+                        window.history.back();
+                        return;
+                    }
+
+                    window.location.href = fallbackUrl;
+                });
+            }
         });
     </script>
 @endsection
