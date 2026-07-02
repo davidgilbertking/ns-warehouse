@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 
 class Item extends Model
@@ -58,10 +58,10 @@ class Item extends Model
     public function activeReservations()
     {
         return $this->hasMany(Reservation::class)
-                    ->whereNull('deleted_at')
-                    ->whereHas('event', function ($query) {
-                        $query->whereNull('deleted_at');
-                    });
+            ->whereNull('deleted_at')
+            ->whereHas('event', function ($query) {
+                $query->whereNull('deleted_at');
+            });
     }
 
     public function images()
@@ -77,15 +77,15 @@ class Item extends Model
     public function availableQuantity($startDate = null, $endDate = null)
     {
         $reserved = $this->reservations()
-                         ->whereHas('event', function ($query) use ($startDate, $endDate) {
-                             if ($startDate) {
-                                 $query->where('end_date', '>=', $startDate);
-                             }
-                             if ($endDate) {
-                                 $query->where('start_date', '<=', $endDate);
-                             }
-                         })
-                         ->sum('quantity');
+            ->whereHas('event', function ($query) use ($startDate, $endDate) {
+                if ($startDate) {
+                    $query->where('end_date', '>=', $startDate);
+                }
+                if ($endDate) {
+                    $query->where('start_date', '<=', $endDate);
+                }
+            })
+            ->sum('quantity');
 
         return max(0, $this->quantity - $reserved);
     }
@@ -137,6 +137,6 @@ class Item extends Model
             'item_subitem',
             'subitem_id', // текущий ключ
             'item_id'     // связанный ключ
-        )->withTimestamps();
+        )->withTimestamps()->withPivot('quantity');
     }
 }

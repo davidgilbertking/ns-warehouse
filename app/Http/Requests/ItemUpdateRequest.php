@@ -62,6 +62,10 @@ class ItemUpdateRequest extends FormRequest
             'subitems.*.selected' => ['nullable', 'boolean'],
             'subitems.*.quantity' => ['nullable', 'integer', 'min:1'],
 
+            'parent_items' => ['nullable', 'array'],
+            'parent_items.*.selected' => ['nullable', 'boolean'],
+            'parent_items.*.quantity' => ['nullable', 'integer', 'min:1'],
+
         ];
     }
 }

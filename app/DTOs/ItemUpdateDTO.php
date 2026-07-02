@@ -38,6 +38,7 @@ readonly class ItemUpdateDTO
         private ?array $videoFiles = [],
         private ?array $subitemIds = [],
         private ?array $subitemsWithQuantities = [],
+        private ?array $parentItemsWithQuantities = [],
 
     ) {}
 
@@ -75,6 +76,7 @@ readonly class ItemUpdateDTO
             $data['videoFiles'] ?? [],
             $data['subitem_ids'] ?? [],
             $data['subitems'] ?? [],
+            $data['parent_items'] ?? [],
 
         );
     }
@@ -130,9 +132,14 @@ readonly class ItemUpdateDTO
     {
         return $this->subitemIds ?? [];
     }
+
     public function getSubitemsWithQuantities(): array
     {
         return $this->subitemsWithQuantities ?? [];
     }
 
+    public function getParentItemsWithQuantities(): array
+    {
+        return $this->parentItemsWithQuantities ?? [];
+    }
 }

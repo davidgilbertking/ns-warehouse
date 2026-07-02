@@ -96,7 +96,9 @@
                     @include('items.partials.composition-fields')
 
                     <h4 class="mt-4">Для ОП</h4>
-                @include('items.partials.op-fields-edit')
+                    @include('items.partials.op-fields-edit')
+                @else
+                    @include('items.partials.parent-items-fields')
                 @endif
 
                 <h4 class="mt-4">Для реализации</h4>

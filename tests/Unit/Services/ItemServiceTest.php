@@ -4,21 +4,24 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
+use App\DTOs\ItemFilterDTO;
 use App\DTOs\ItemStoreDTO;
+use App\DTOs\ItemUpdateDTO;
 use App\Models\Item;
 use App\Repositories\ItemRepository;
-use App\Repositories\ItemImageRepository;
+use App\Services\ItemImageService;
 use App\Services\ItemService;
-use Illuminate\Support\Facades\Auth;
-use Tests\TestCase;
-use Mockery;
-use App\DTOs\ItemUpdateDTO;
-use App\DTOs\ItemFilterDTO;
+use App\Services\ItemVideoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+use Mockery;
+use Tests\TestCase;
 
 class ItemServiceTest extends TestCase
 {
     use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,11 +36,11 @@ class ItemServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function testCreateItemSuccessfully(): void
+    public function test_create_item_successfully(): void
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
-        $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $imageServiceMock = Mockery::mock(ItemImageService::class);
+        $videoServiceMock = Mockery::mock(ItemVideoService::class);
         $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $dto = new ItemStoreDTO(
@@ -72,10 +75,10 @@ class ItemServiceTest extends TestCase
         );
 
         $item = new Item([
-                             'id' => 1,
-                             'name' => 'Test Item',
-                             'quantity' => 10,
-                         ]);
+            'id' => 1,
+            'name' => 'Test Item',
+            'quantity' => 10,
+        ]);
 
         $repositoryMock
             ->shouldReceive('create')
@@ -92,18 +95,18 @@ class ItemServiceTest extends TestCase
         $this->assertEquals(10, $result->quantity);
     }
 
-    public function testUpdateItemSuccessfully(): void
+    public function test_update_item_successfully(): void
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
-        $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $imageServiceMock = Mockery::mock(ItemImageService::class);
+        $videoServiceMock = Mockery::mock(ItemVideoService::class);
         $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $item = new Item([
-                             'id' => 1,
-                             'name' => 'Original Item',
-                             'quantity' => 5,
-                         ]);
+            'id' => 1,
+            'name' => 'Original Item',
+            'quantity' => 5,
+        ]);
 
         $dto = new ItemUpdateDTO(
             name: 'Updated Item',
@@ -148,18 +151,18 @@ class ItemServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testDeleteItemSuccessfully(): void
+    public function test_delete_item_successfully(): void
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
-        $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $imageServiceMock = Mockery::mock(ItemImageService::class);
+        $videoServiceMock = Mockery::mock(ItemVideoService::class);
         $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $item = new Item([
-                             'id' => 1,
-                             'name' => 'Item to delete',
-                             'quantity' => 0,
-                         ]);
+            'id' => 1,
+            'name' => 'Item to delete',
+            'quantity' => 0,
+        ]);
 
         $repositoryMock
             ->shouldReceive('delete')
@@ -174,11 +177,11 @@ class ItemServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testGetPaginatedItemsCalculatesAvailableQuantityCorrectly(): void
+    public function test_get_paginated_items_calculates_available_quantity_correctly(): void
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
-        $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $imageServiceMock = Mockery::mock(ItemImageService::class);
+        $videoServiceMock = Mockery::mock(ItemVideoService::class);
         $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
@@ -187,23 +190,23 @@ class ItemServiceTest extends TestCase
             availableTo: '2025-05-10'
         );
 
-        $event = new \stdClass();
+        $event = new \stdClass;
         $event->start_date = '2025-05-05';
         $event->end_date = '2025-05-06';
 
-        $reservation = new \stdClass();
+        $reservation = new \stdClass;
         $reservation->event = $event;
         $reservation->quantity = 2;
 
         $item = new Item([
-                             'id' => 1,
-                             'name' => 'Test Item',
-                             'quantity' => 10,
-                         ]);
+            'id' => 1,
+            'name' => 'Test Item',
+            'quantity' => 10,
+        ]);
 
         $item->reservations = [$reservation];
 
-        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginator = new LengthAwarePaginator(
             [$item],
             1,
             10,
@@ -213,20 +216,20 @@ class ItemServiceTest extends TestCase
         $repositoryMock
             ->shouldReceive('paginateWithFilters')
             ->once()
-            ->with($filter, 10)
+            ->with($filter, 10, 0)
             ->andReturn($paginator);
 
-        $result = $itemService->getPaginatedItems($filter, 10);
+        $result = $itemService->getPaginatedItems($filter, 0, 10);
 
         $this->assertEquals(1, $result->total());
         $this->assertEquals(8, $result->items()[0]->available_quantity);
     }
 
-    public function testGetPaginatedItemsIgnoresReservationOutsidePeriod(): void
+    public function test_get_paginated_items_ignores_reservation_outside_period(): void
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
-        $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $imageServiceMock = Mockery::mock(ItemImageService::class);
+        $videoServiceMock = Mockery::mock(ItemVideoService::class);
         $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
@@ -235,23 +238,23 @@ class ItemServiceTest extends TestCase
             availableTo: '2025-05-10'
         );
 
-        $event = new \stdClass();
+        $event = new \stdClass;
         $event->start_date = '2025-04-10';
         $event->end_date = '2025-04-12';
 
-        $reservation = new \stdClass();
+        $reservation = new \stdClass;
         $reservation->event = $event;
         $reservation->quantity = 3;
 
         $item = new Item([
-                             'id' => 2,
-                             'name' => 'Item without reservation',
-                             'quantity' => 5,
-                         ]);
+            'id' => 2,
+            'name' => 'Item without reservation',
+            'quantity' => 5,
+        ]);
 
         $item->reservations = [$reservation];
 
-        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginator = new LengthAwarePaginator(
             [$item],
             1,
             10,
@@ -261,19 +264,19 @@ class ItemServiceTest extends TestCase
         $repositoryMock
             ->shouldReceive('paginateWithFilters')
             ->once()
-            ->with($filter, 10)
+            ->with($filter, 10, 0)
             ->andReturn($paginator);
 
-        $result = $itemService->getPaginatedItems($filter, 10);
+        $result = $itemService->getPaginatedItems($filter, 0, 10);
 
         $this->assertEquals(5, $result->items()[0]->available_quantity);
     }
 
-    public function testGetPaginatedItemsReservationFullyCoversItem(): void
+    public function test_get_paginated_items_reservation_fully_covers_item(): void
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
-        $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $imageServiceMock = Mockery::mock(ItemImageService::class);
+        $videoServiceMock = Mockery::mock(ItemVideoService::class);
         $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
@@ -282,23 +285,23 @@ class ItemServiceTest extends TestCase
             availableTo: '2025-05-10'
         );
 
-        $event = new \stdClass();
+        $event = new \stdClass;
         $event->start_date = '2025-05-03';
         $event->end_date = '2025-05-05';
 
-        $reservation = new \stdClass();
+        $reservation = new \stdClass;
         $reservation->event = $event;
         $reservation->quantity = 5;
 
         $item = new Item([
-                             'id' => 3,
-                             'name' => 'Fully Reserved Item',
-                             'quantity' => 5,
-                         ]);
+            'id' => 3,
+            'name' => 'Fully Reserved Item',
+            'quantity' => 5,
+        ]);
 
         $item->reservations = [$reservation];
 
-        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginator = new LengthAwarePaginator(
             [$item],
             1,
             10,
@@ -308,19 +311,19 @@ class ItemServiceTest extends TestCase
         $repositoryMock
             ->shouldReceive('paginateWithFilters')
             ->once()
-            ->with($filter, 10)
+            ->with($filter, 10, 0)
             ->andReturn($paginator);
 
-        $result = $itemService->getPaginatedItems($filter, 10);
+        $result = $itemService->getPaginatedItems($filter, 0, 10);
 
         $this->assertEquals(0, $result->items()[0]->available_quantity);
     }
 
-    public function testGetPaginatedItemsMultipleReservationsSumCorrectly(): void
+    public function test_get_paginated_items_multiple_reservations_sum_correctly(): void
     {
         $repositoryMock = Mockery::mock(ItemRepository::class);
-        $imageServiceMock = Mockery::mock(\App\Services\ItemImageService::class);
-        $videoServiceMock = Mockery::mock(\App\Services\ItemVideoService::class);
+        $imageServiceMock = Mockery::mock(ItemImageService::class);
+        $videoServiceMock = Mockery::mock(ItemVideoService::class);
         $itemService = new ItemService($repositoryMock, $imageServiceMock, $videoServiceMock);
 
         $filter = new ItemFilterDTO(
@@ -329,31 +332,31 @@ class ItemServiceTest extends TestCase
             availableTo: '2025-05-10'
         );
 
-        $event1 = new \stdClass();
+        $event1 = new \stdClass;
         $event1->start_date = '2025-05-02';
         $event1->end_date = '2025-05-04';
 
-        $reservation1 = new \stdClass();
+        $reservation1 = new \stdClass;
         $reservation1->event = $event1;
         $reservation1->quantity = 2;
 
-        $event2 = new \stdClass();
+        $event2 = new \stdClass;
         $event2->start_date = '2025-05-06';
         $event2->end_date = '2025-05-07';
 
-        $reservation2 = new \stdClass();
+        $reservation2 = new \stdClass;
         $reservation2->event = $event2;
         $reservation2->quantity = 1;
 
         $item = new Item([
-                             'id' => 4,
-                             'name' => 'Partially Reserved Item',
-                             'quantity' => 10,
-                         ]);
+            'id' => 4,
+            'name' => 'Partially Reserved Item',
+            'quantity' => 10,
+        ]);
 
         $item->reservations = [$reservation1, $reservation2];
 
-        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginator = new LengthAwarePaginator(
             [$item],
             1,
             10,
@@ -363,10 +366,10 @@ class ItemServiceTest extends TestCase
         $repositoryMock
             ->shouldReceive('paginateWithFilters')
             ->once()
-            ->with($filter, 10)
+            ->with($filter, 10, 0)
             ->andReturn($paginator);
 
-        $result = $itemService->getPaginatedItems($filter, 10);
+        $result = $itemService->getPaginatedItems($filter, 0, 10);
 
         $this->assertEquals(7, $result->items()[0]->available_quantity);
     }

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\ActivityLog;
 use App\DTOs\ActivityLogFilterDTO;
+use App\Models\ActivityLog;
+use App\Support\UnicodeSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ActivityLogRepository
@@ -14,28 +15,36 @@ class ActivityLogRepository
     {
         $query = ActivityLog::with('user')->orderBy('created_at', 'desc');
 
-        if ($filters->getUser() !== null) {
-            $query->whereHas('user', function ($q) use ($filters) {
-                $q->where('name', 'ILIKE', '%' . $filters->getUser() . '%');
-            });
-        }
-
-        if ($filters->getAction() !== null) {
-            $query->where('action', 'ILIKE', '%' . $filters->getAction() . '%');
-        }
-
-        if ($filters->getEntityType() !== null) {
-            $query->where('entity_type', 'ILIKE', '%' . $filters->getEntityType() . '%');
-        }
-
-        if ($filters->getDescription() !== null) {
-            $query->where('description', 'ILIKE', '%' . $filters->getDescription() . '%');
-        }
-
         if ($filters->getDate() !== null) {
             $query->whereDate('created_at', $filters->getDate());
         }
 
-        return $query->paginate(15);
+        $logs = $query->get();
+
+        if (UnicodeSearch::term($filters->getUser()) !== null) {
+            $logs = $logs->filter(
+                fn (ActivityLog $log): bool => UnicodeSearch::contains($log->user?->name, $filters->getUser())
+            );
+        }
+
+        if (UnicodeSearch::term($filters->getAction()) !== null) {
+            $logs = $logs->filter(
+                fn (ActivityLog $log): bool => UnicodeSearch::contains($log->action, $filters->getAction())
+            );
+        }
+
+        if (UnicodeSearch::term($filters->getEntityType()) !== null) {
+            $logs = $logs->filter(
+                fn (ActivityLog $log): bool => UnicodeSearch::contains($log->entity_type, $filters->getEntityType())
+            );
+        }
+
+        if (UnicodeSearch::term($filters->getDescription()) !== null) {
+            $logs = $logs->filter(
+                fn (ActivityLog $log): bool => UnicodeSearch::contains($log->description, $filters->getDescription())
+            );
+        }
+
+        return UnicodeSearch::paginate($logs, 15);
     }
 }

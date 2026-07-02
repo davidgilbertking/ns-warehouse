@@ -8,6 +8,7 @@ use App\DTOs\ItemFilterDTO;
 use App\DTOs\ItemStoreDTO;
 use App\DTOs\ItemUpdateDTO;
 use App\Models\Item;
+use App\Support\UnicodeSearch;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -15,7 +16,7 @@ class ItemRepository
 {
     public function paginateWithFilters(ItemFilterDTO $filter, int $perPage = 10, int $depth = 0): LengthAwarePaginator
     {
-        return $this->buildQueryWithFilters($filter, $depth)->paginate($perPage);
+        return UnicodeSearch::paginate($this->getFilteredItems($filter, $depth), $perPage);
     }
 
     public function create(ItemStoreDTO $data): Item
@@ -35,58 +36,65 @@ class ItemRepository
 
     public function getForExport(ItemFilterDTO $filter, int $depth = 0): Collection
     {
-        return $this->buildQueryWithFilters($filter, $depth)->get();
+        return $this->getFilteredItems($filter, $depth);
     }
 
-    private function buildQueryWithFilters(ItemFilterDTO $filter, int $depth): \Illuminate\Database\Eloquent\Builder
+    private function getFilteredItems(ItemFilterDTO $filter, int $depth): Collection
     {
-        $query = Item::with(['products', 'reservations.event'])
-                     ->where('depth', $depth);
+        $items = Item::with(['products', 'reservations.event'])
+            ->where('depth', $depth)
+            ->orderBy('name', 'asc')
+            ->get();
 
-        if ($filter->getSearch()) {
-            $search = $filter->getSearch();
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('description', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('size', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('material', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('supplier', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('storage_location', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('mechanics', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('scalability', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('branding_options', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('adaptation_options', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('op_price', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('construction_description', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('contractor', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('production_cost', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('change_history', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('consumables', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('implementation_comments', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('mounting', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('storage_features', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('design_links', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('event_history', 'ILIKE', '%' . $search . '%')
-                  ->orWhere('storage_place', 'ILIKE', '%' . $search . '%')
-                  ->orWhereHas('products', function ($q2) use ($search) {
-                      $q2->where('name', 'ILIKE', '%' . $search . '%');
-                  });
-            });
+        if (UnicodeSearch::term($filter->getSearch()) !== null) {
+            $items = $items->filter(fn (Item $item): bool => $this->matchesSearch($item, $filter->getSearch()));
         }
 
-        if ($filter->getProduct()) {
-            $query->whereHas('products', function ($q) use ($filter) {
-                $q->where('name', 'ILIKE', '%' . $filter->getProduct() . '%');
-            });
+        if (UnicodeSearch::term($filter->getProduct()) !== null) {
+            $items = $items->filter(
+                fn (Item $item): bool => $item->products->contains(
+                    fn ($product): bool => UnicodeSearch::contains($product->name, $filter->getProduct())
+                )
+            );
         }
 
-        if ($filter->getStoragePlace()) {
-            $query->where('storage_place', 'ILIKE', '%' . $filter->getStoragePlace() . '%');
+        if (UnicodeSearch::term($filter->getStoragePlace()) !== null) {
+            $items = $items->filter(
+                fn (Item $item): bool => UnicodeSearch::contains($item->storage_place, $filter->getStoragePlace())
+            );
         }
 
-        $query->orderBy('name', 'asc');
+        return $items->values();
+    }
 
-        return $query;
+    private function matchesSearch(Item $item, ?string $search): bool
+    {
+        return UnicodeSearch::containsAny([
+            $item->name,
+            $item->description,
+            $item->size,
+            $item->material,
+            $item->supplier,
+            $item->storage_location,
+            $item->mechanics,
+            $item->scalability,
+            $item->branding_options,
+            $item->adaptation_options,
+            $item->op_price,
+            $item->construction_description,
+            $item->contractor,
+            $item->production_cost,
+            $item->change_history,
+            $item->consumables,
+            $item->implementation_comments,
+            $item->mounting,
+            $item->storage_features,
+            $item->design_links,
+            $item->event_history,
+            $item->storage_place,
+        ], $search) || $item->products->contains(
+            fn ($product): bool => UnicodeSearch::contains($product->name, $search)
+        );
     }
 
     public function allWithQuantities(): Collection
@@ -100,31 +108,31 @@ class ItemRepository
     }
 
     public function getAvailableQuantityForItem(
-        int  $itemId, string $startDate, string $endDate,
+        int $itemId, string $startDate, string $endDate,
         ?int $excludeEventId = null
     ): int {
         $item = Item::find($itemId);
 
-        if (!$item) {
+        if (! $item) {
             return 0;
         }
 
         $reserved = $item->reservations()
-                         ->whereHas('event', function ($query) use ($startDate, $endDate, $excludeEventId) {
-                             $query->where(function ($q) use ($startDate, $endDate) {
-                                 $q->whereBetween('start_date', [$startDate, $endDate])
-                                   ->orWhereBetween('end_date', [$startDate, $endDate])
-                                   ->orWhere(function ($q2) use ($startDate, $endDate) {
-                                       $q2->where('start_date', '<=', $startDate)
-                                          ->where('end_date', '>=', $endDate);
-                                   });
-                             });
+            ->whereHas('event', function ($query) use ($startDate, $endDate, $excludeEventId) {
+                $query->where(function ($q) use ($startDate, $endDate) {
+                    $q->whereBetween('start_date', [$startDate, $endDate])
+                        ->orWhereBetween('end_date', [$startDate, $endDate])
+                        ->orWhere(function ($q2) use ($startDate, $endDate) {
+                            $q2->where('start_date', '<=', $startDate)
+                                ->where('end_date', '>=', $endDate);
+                        });
+                });
 
-                             if ($excludeEventId) {
-                                 $query->where('id', '!=', $excludeEventId);
-                             }
-                         })
-                         ->sum('quantity');
+                if ($excludeEventId) {
+                    $query->where('id', '!=', $excludeEventId);
+                }
+            })
+            ->sum('quantity');
 
         return max(0, $item->quantity - $reserved);
     }

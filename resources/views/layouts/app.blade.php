@@ -231,6 +231,15 @@
     });
 
     $(document).ready(function () {
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         $('#subitem-selector').select2({
             placeholder: 'Поиск предметов...',
             ajax: {
@@ -259,7 +268,7 @@
 
         $('#subitem-selector').on('select2:select', function (e) {
             const id = e.params.data.id;
-            const name = e.params.data.text;
+            const name = escapeHtml(e.params.data.text);
 
             if ($('#subitems-container .subitem-entry[data-id="' + id + '"]').length > 0) {
                 return;
@@ -286,6 +295,63 @@
 
         $(document).on('click', '.remove-subitem', function () {
             $(this).closest('.subitem-entry').remove();
+        });
+
+        $('#parent-item-selector').select2({
+            placeholder: 'Поиск заданий...',
+            ajax: {
+                url: '{{ route('api.items.search-parent-items') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return {
+                                id: item.id,
+                                text: item.name
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 1
+        });
+
+        $('#parent-item-selector').on('select2:select', function (e) {
+            const id = e.params.data.id;
+            const name = escapeHtml(e.params.data.text);
+
+            if ($('#parent-items-container .parent-item-entry[data-id="' + id + '"]').length > 0) {
+                return;
+            }
+
+            const html = `
+                <div class="parent-item-entry border rounded p-2 mb-2" data-id="${id}">
+                    <input type="hidden" name="parent_items[${id}][selected]" value="1">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div><strong>${name}</strong></div>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-parent-item">Удалить</button>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label small">Количество в задании:</label>
+                        <input type="number" name="parent_items[${id}][quantity]"
+                               class="form-control"
+                               min="1"
+                               value="1">
+                    </div>
+                </div>
+            `;
+            $('#parent-items-container').append(html);
+        });
+
+        $(document).on('click', '.remove-parent-item', function () {
+            $(this).closest('.parent-item-entry').remove();
         });
     });
 </script>

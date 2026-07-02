@@ -1,14 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\ItemImageController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemImageController;
 use App\Http\Controllers\ItemVideoController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 // Главная страница
 Route::get('/', function () {
@@ -26,7 +28,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Аутентификация
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 // Группа маршрутов для авторизованных пользователей
 Route::middleware('auth')->group(function () {
@@ -41,7 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/items/{item}/images', [ItemImageController::class, 'store'])->name('items.images.store');
     Route::resource('items', ItemController::class);
     Route::get('/api/subitems/search', [ItemController::class, 'searchSubitems'])
-         ->name('api.items.search-subitems');
+        ->name('api.items.search-subitems');
+    Route::get('/api/parent-items/search', [ItemController::class, 'searchParentItems'])
+        ->name('api.items.search-parent-items');
 
     // Видео для предметов
     Route::post('/items/{item}/videos', [ItemVideoController::class, 'store'])->name('items.videos.store');
@@ -52,8 +56,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/events/{event}/clone', [EventController::class, 'cloneEvent'])->name('events.clone');
     Route::get('/events/{event}/export-items', [EventController::class, 'exportItems'])->name('events.exportItems');
     Route::post('/events/check-availability', [EventController::class, 'checkAvailability']);
-    Route::get('/api/availability', function (\Illuminate\Http\Request $request) {
-        return app(\App\Http\Controllers\EventController::class)->getAvailableQuantities($request);
+    Route::get('/api/availability', function (Request $request) {
+        return app(EventController::class)->getAvailableQuantities($request);
     });
     Route::get('/api/get-available-quantities', [EventController::class, 'getAvailableQuantities']);
     Route::resource('events', EventController::class)->except(['create']);
@@ -64,11 +68,11 @@ Route::middleware('auth')->group(function () {
         'products.updateItems'
     );
     Route::get('/products/{product}/items', [ProductController::class, 'items'])->name('products.items');
-    Route::get('/api/products/{product}/items', function (\App\Models\Product $product) {
+    Route::get('/api/products/{product}/items', function (Product $product) {
         return $product->items->map(function ($item) {
             return [
-                'id'       => $item->id,
-                'name'     => $item->name,
+                'id' => $item->id,
+                'name' => $item->name,
                 'quantity' => $item->pivot->quantity,
             ];
         });

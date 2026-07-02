@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Services\ItemImageService;
-use App\Services\ItemService;
-use App\Http\Requests\ItemStoreRequest;
-use App\Http\Requests\ItemUpdateRequest;
 use App\DTOs\ItemFilterDTO;
 use App\DTOs\ItemStoreDTO;
 use App\DTOs\ItemUpdateDTO;
+use App\Http\Requests\ItemStoreRequest;
+use App\Http\Requests\ItemUpdateRequest;
 use App\Models\Item;
-use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Services\ItemExportService;
+use App\Services\ItemImageService;
+use App\Services\ItemService;
+use App\Support\UnicodeSearch;
+use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
     public function __construct(
-        protected ItemService       $service,
+        protected ItemService $service,
         protected ItemExportService $exportService,
-        protected ItemImageService  $imageService
-    ) {
-    }
+        protected ItemImageService $imageService
+    ) {}
 
     public function index(Request $request)
     {
@@ -65,7 +65,7 @@ class ItemController extends Controller
         $entityName = $dto->getDepth() === 1 ? 'Предмет' : 'Задание';
 
         return redirect()->route('items.index', ['depth' => $dto->getDepth()])
-                         ->with('success', "Создано: {$entityName}");
+            ->with('success', "Создано: {$entityName}");
     }
 
     public function show(Item $item)
@@ -77,6 +77,7 @@ class ItemController extends Controller
         if ($depth === 1) {
             $item->load('parentItems');
         }
+
         return view('items.show', compact('item', 'depth', 'entityName'));
     }
 
@@ -91,8 +92,12 @@ class ItemController extends Controller
 
         // Получаем выбранные предметы с pivot-данными (quantity)
         $selectedSubitems = $item->subitems()->withPivot('quantity')->get();
+        $selectedParentItems = $item->parentItems()->withPivot('quantity')->get();
 
-        return view('items.edit', compact('item', 'products', 'selectedSubitems', 'depth', 'entityName'));
+        return view(
+            'items.edit',
+            compact('item', 'products', 'selectedSubitems', 'selectedParentItems', 'depth', 'entityName')
+        );
     }
 
     public function update(ItemUpdateRequest $request, Item $item)
@@ -138,7 +143,7 @@ class ItemController extends Controller
         $filter = ItemFilterDTO::fromArray($request->all());
 
         $csvContent = $this->exportService->export($filter);
-        $filename   = 'items_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
+        $filename = 'items_export_'.now()->format('Y_m_d_H_i_s').'.csv';
 
         return response($csvContent)
             ->header('Content-Type', 'text/csv')
@@ -156,21 +161,10 @@ class ItemController extends Controller
     {
         $validated = $request->validated();
 
-        $validated['depth'] = (int)$request->get('depth', 0);
+        $validated['depth'] = (int) $request->get('depth', 0);
 
-        $subitemsWithQuantities = [];
-        if ($request->filled('subitems')) {
-            foreach ($request->input('subitems') as $subitemId => $subitemData) {
-                if (isset($subitemData['selected']) && $subitemData['selected']) {
-                    $quantity = max(1, (int)($subitemData['quantity'] ?? 1));
-                    $subitemsWithQuantities[$subitemId] = [
-                        'selected' => 1,
-                        'quantity' => $quantity,
-                    ];
-                }
-            }
-        }
-        $validated['subitems'] = $subitemsWithQuantities;
+        $validated['subitems'] = $this->collectRelatedItemsWithQuantities($request, 'subitems');
+        $validated['parent_items'] = $this->collectRelatedItemsWithQuantities($request, 'parent_items');
 
         return ItemStoreDTO::fromArray($validated);
     }
@@ -179,59 +173,81 @@ class ItemController extends Controller
     {
         $validated = $request->validated();
 
-        $subitemsWithQuantities = [];
-        if ($request->filled('subitems')) {
-            foreach ($request->input('subitems') as $subitemId => $subitemData) {
-                $subitemsWithQuantities[$subitemId] = [
-                    'selected' => isset($subitemData['selected']) && $subitemData['selected'],
-                    'quantity' => max(1, (int)($subitemData['quantity'] ?? 1)),
-                ];
-            }
-        }
+        $subitemsWithQuantities = $this->collectRelatedItemsWithQuantities($request, 'subitems');
+        $parentItemsWithQuantities = $this->collectRelatedItemsWithQuantities($request, 'parent_items');
 
         return new ItemUpdateDTO(
-            name:                    $validated['name'],
-            description:             $validated['description'] ?? null,
-            quantity:                (int)$validated['quantity'],
-            size:                    $validated['size'] ?? null,
-            material:                $validated['material'] ?? null,
-            supplier:                $validated['supplier'] ?? null,
-            storageLocation:         $validated['storage_location'] ?? null,
-            mechanics:               $validated['mechanics'] ?? null,
-            scalability:             $validated['scalability'] ?? null,
-            clientPrice:             isset($validated['client_price']) ? (float)$validated['client_price'] : null,
-            brandingOptions:         $validated['branding_options'] ?? null,
-            adaptationOptions:       $validated['adaptation_options'] ?? null,
-            opPrice:                 $validated['op_price'] ?? null,
+            name: $validated['name'],
+            description: $validated['description'] ?? null,
+            quantity: (int) $validated['quantity'],
+            size: $validated['size'] ?? null,
+            material: $validated['material'] ?? null,
+            supplier: $validated['supplier'] ?? null,
+            storageLocation: $validated['storage_location'] ?? null,
+            mechanics: $validated['mechanics'] ?? null,
+            scalability: $validated['scalability'] ?? null,
+            clientPrice: isset($validated['client_price']) ? (float) $validated['client_price'] : null,
+            brandingOptions: $validated['branding_options'] ?? null,
+            adaptationOptions: $validated['adaptation_options'] ?? null,
+            opPrice: $validated['op_price'] ?? null,
             constructionDescription: $validated['construction_description'] ?? null,
-            contractor:              $validated['contractor'] ?? null,
-            productionCost:          $validated['production_cost'] ?? null,
-            changeHistory:           $validated['change_history'] ?? null,
-            consumables:             $validated['consumables'] ?? null,
-            implementationComments:  $validated['implementation_comments'] ?? null,
-            mounting:                $validated['mounting'] ?? null,
-            storageFeatures:         $validated['storage_features'] ?? null,
-            designLinks:             $validated['design_links'] ?? null,
-            eventHistory:            $validated['event_history'] ?? null,
-            storagePlace:            $validated['storage_place'] ?? null,
-            opMedia:                 array_filter($validated['op_media'] ?? []),
-            realMedia:               array_filter($validated['real_media'] ?? []),
-            eventMedia:              array_filter($validated['event_media'] ?? []),
-            productIds:              $validated['product_ids'] ?? [],
-            subitemsWithQuantities:  $subitemsWithQuantities,
+            contractor: $validated['contractor'] ?? null,
+            productionCost: $validated['production_cost'] ?? null,
+            changeHistory: $validated['change_history'] ?? null,
+            consumables: $validated['consumables'] ?? null,
+            implementationComments: $validated['implementation_comments'] ?? null,
+            mounting: $validated['mounting'] ?? null,
+            storageFeatures: $validated['storage_features'] ?? null,
+            designLinks: $validated['design_links'] ?? null,
+            eventHistory: $validated['event_history'] ?? null,
+            storagePlace: $validated['storage_place'] ?? null,
+            opMedia: array_filter($validated['op_media'] ?? []),
+            realMedia: array_filter($validated['real_media'] ?? []),
+            eventMedia: array_filter($validated['event_media'] ?? []),
+            productIds: $validated['product_ids'] ?? [],
+            subitemsWithQuantities: $subitemsWithQuantities,
+            parentItemsWithQuantities: $parentItemsWithQuantities,
         );
+    }
+
+    private function collectRelatedItemsWithQuantities(Request $request, string $field): array
+    {
+        $itemsWithQuantities = [];
+
+        foreach ($request->input($field, []) as $itemId => $itemData) {
+            $itemsWithQuantities[$itemId] = [
+                'selected' => isset($itemData['selected']) && (bool) $itemData['selected'],
+                'quantity' => max(1, (int) ($itemData['quantity'] ?? 1)),
+            ];
+        }
+
+        return $itemsWithQuantities;
     }
 
     public function searchSubitems(Request $request)
     {
-        $query = $request->get('q');
+        return response()->json($this->searchItemsByDepth($request, 1));
+    }
 
-        $subitems = Item::where('depth', 1)
-                        ->when($query, fn($q) => $q->where('name', 'ilike', "%{$query}%"))
-                        ->orderBy('name')
-                        ->limit(20)
-                        ->get(['id', 'name']);
+    public function searchParentItems(Request $request)
+    {
+        return response()->json($this->searchItemsByDepth($request, 0));
+    }
 
-        return response()->json($subitems);
+    private function searchItemsByDepth(Request $request, int $depth)
+    {
+        $query = UnicodeSearch::term($request->get('q'));
+        $items = Item::where('depth', $depth)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        if ($query === null) {
+            return $items->take(20)->values();
+        }
+
+        return $items
+            ->filter(fn (Item $item): bool => UnicodeSearch::contains($item->name, $query))
+            ->take(20)
+            ->values();
     }
 }

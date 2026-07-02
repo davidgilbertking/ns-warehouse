@@ -14,7 +14,7 @@ class EventControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIndexPageIsAccessible(): void
+    public function test_index_page_is_accessible(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -31,7 +31,7 @@ class EventControllerTest extends TestCase
         $response->assertViewHas('events');
     }
 
-    public function testCreatePageIsAccessible(): void
+    public function test_create_page_is_accessible(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -45,14 +45,14 @@ class EventControllerTest extends TestCase
         $response->assertViewIs('events.create');
     }
 
-    public function testStoreCreatesEventAndRedirects(): void
+    public function test_store_creates_event_and_redirects(): void
     {
         // Arrange
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        Item::factory()->create(['id' => 1]);
-        Item::factory()->create(['id' => 2]);
+        Item::factory()->create(['id' => 1, 'quantity' => 5]);
+        Item::factory()->create(['id' => 2, 'quantity' => 5]);
 
         $data = [
             'name' => 'Test Event',
@@ -75,20 +75,21 @@ class EventControllerTest extends TestCase
             'user_id' => $user->id,
         ]);
     }
-    public function testUpdateUpdatesEventAndRedirects(): void
+
+    public function test_update_updates_event_and_redirects(): void
     {
         // Arrange
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $event = Event::factory()->create([
-                                              'user_id' => $user->id,
-                                              'name' => 'Old Name',
-                                              'start_date' => now()->addDays(1)->toDateString(),
-                                              'end_date' => now()->addDays(2)->toDateString(),
-                                          ]);
+            'user_id' => $user->id,
+            'name' => 'Old Name',
+            'start_date' => now()->addDays(1)->toDateString(),
+            'end_date' => now()->addDays(2)->toDateString(),
+        ]);
 
-        $items = Item::factory()->count(2)->create();
+        $items = Item::factory()->count(2)->create(['quantity' => 5]);
 
         $payload = [
             'name' => 'Updated Name',
@@ -116,18 +117,19 @@ class EventControllerTest extends TestCase
 
         $this->assertDatabaseHas('events', [
             'start_date' => $event->fresh()->start_date->toDateTimeString(),
-            'end_date'   => $event->fresh()->end_date->toDateTimeString(),
+            'end_date' => $event->fresh()->end_date->toDateTimeString(),
         ]);
     }
-    public function testDestroyDeletesEventAndRedirects(): void
+
+    public function test_destroy_deletes_event_and_redirects(): void
     {
         // Arrange
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $event = Event::factory()->create([
-                                              'user_id' => $user->id,
-                                          ]);
+            'user_id' => $user->id,
+        ]);
 
         // Act
         $response = $this->delete(route('events.destroy', $event));
@@ -140,5 +142,4 @@ class EventControllerTest extends TestCase
             'id' => $event->id,
         ]);
     }
-
 }

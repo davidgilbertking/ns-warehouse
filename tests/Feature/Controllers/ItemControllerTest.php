@@ -4,49 +4,52 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Controllers;
 
+use App\Models\Event;
+use App\Models\Item;
+use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\Reservation;
-use App\Models\Event;
 
 class ItemControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIndexReturnsSuccessfulResponse(): void
+    public function test_index_returns_successful_response(): void
     {
         // Arrange
         $user = User::factory()->create();
 
         // Act & Assert
         $this->actingAs($user)
-             ->get(route('items.index'))
-             ->assertOk()
-             ->assertViewIs('items.index');
+            ->get(route('items.index'))
+            ->assertOk()
+            ->assertViewIs('items.index');
     }
 
-    public function testCreateReturnsSuccessfulResponseForAuthorizedUser(): void
+    public function test_create_returns_successful_response_for_authorized_user(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin', // или любая роль, у которой есть права
-                                        ]);
+            'role' => 'admin', // или любая роль, у которой есть права
+        ]);
 
         // Act & Assert
         $this->actingAs($user)
-             ->get(route('items.create'))
-             ->assertOk()
-             ->assertViewIs('items.create');
+            ->get(route('items.create'))
+            ->assertOk()
+            ->assertViewIs('items.create');
     }
-    public function testStoreCreatesNewItem(): void
+
+    public function test_store_creates_new_item(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin', // или любой не viewer
-                                        ]);
+            'role' => 'admin', // или любой не viewer
+        ]);
 
         $data = [
+            'depth' => 1,
             'name' => 'Test Item',
             'description' => 'Test Description',
             'quantity' => 5,
@@ -78,9 +81,9 @@ class ItemControllerTest extends TestCase
 
         // Act & Assert
         $this->actingAs($user)
-             ->post(route('items.store'), $data)
-             ->assertRedirect(route('items.index'))
-             ->assertSessionHas('success', 'Предмет создан!');
+            ->post(route('items.store'), $data)
+            ->assertRedirect(route('items.index', ['depth' => 1]))
+            ->assertSessionHas('success', 'Создано: Предмет');
 
         // Проверяем, что предмет действительно создан в базе
         $this->assertDatabaseHas('items', [
@@ -89,74 +92,78 @@ class ItemControllerTest extends TestCase
             'quantity' => 5,
         ]);
     }
-    public function testShowReturnsSuccessfulResponse(): void
+
+    public function test_show_returns_successful_response(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin',
-                                        ]);
+            'role' => 'admin',
+        ]);
 
-        $item = \App\Models\Item::create([
-                                             'name' => 'Test Show Item',
-                                             'description' => 'Description',
-                                             'quantity' => 10,
-                                             'size' => 'Medium',
-                                             'material' => 'Steel',
-                                             'supplier' => 'Supplier X',
-                                             'storage_location' => 'Shelf B1',
-                                         ]);
+        $item = Item::create([
+            'name' => 'Test Show Item',
+            'description' => 'Description',
+            'quantity' => 10,
+            'size' => 'Medium',
+            'material' => 'Steel',
+            'supplier' => 'Supplier X',
+            'storage_location' => 'Shelf B1',
+        ]);
 
         // Act & Assert
         $this->actingAs($user)
-             ->get(route('items.show', $item))
-             ->assertOk()
-             ->assertViewIs('items.show')
-             ->assertViewHas('item', function ($viewItem) use ($item) {
-                 return $viewItem->id === $item->id;
-             });
+            ->get(route('items.show', $item))
+            ->assertOk()
+            ->assertViewIs('items.show')
+            ->assertViewHas('item', function ($viewItem) use ($item) {
+                return $viewItem->id === $item->id;
+            });
     }
-    public function testEditReturnsSuccessfulResponseForAuthorizedUser(): void
+
+    public function test_edit_returns_successful_response_for_authorized_user(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin',
-                                        ]);
+            'role' => 'admin',
+        ]);
 
-        $item = \App\Models\Item::create([
-                                             'name' => 'Test Edit Item',
-                                             'description' => 'Description',
-                                             'quantity' => 7,
-                                             'size' => 'Small',
-                                             'material' => 'Plastic',
-                                             'supplier' => 'Supplier Y',
-                                             'storage_location' => 'Shelf C1',
-                                         ]);
+        $item = Item::create([
+            'name' => 'Test Edit Item',
+            'description' => 'Description',
+            'quantity' => 7,
+            'size' => 'Small',
+            'material' => 'Plastic',
+            'supplier' => 'Supplier Y',
+            'storage_location' => 'Shelf C1',
+        ]);
 
         // Act & Assert
         $this->actingAs($user)
-             ->get(route('items.edit', $item))
-             ->assertOk()
-             ->assertViewIs('items.edit')
-             ->assertViewHas('item', function ($viewItem) use ($item) {
-                 return $viewItem->id === $item->id;
-             });
+            ->get(route('items.edit', $item))
+            ->assertOk()
+            ->assertViewIs('items.edit')
+            ->assertViewHas('item', function ($viewItem) use ($item) {
+                return $viewItem->id === $item->id;
+            });
     }
-    public function testUpdateUpdatesItem(): void
+
+    public function test_update_updates_item(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin',
-                                        ]);
+            'role' => 'admin',
+        ]);
 
-        $item = \App\Models\Item::create([
-                                             'name' => 'Old Name',
-                                             'description' => 'Old Description',
-                                             'quantity' => 3,
-                                             'size' => 'Small',
-                                             'material' => 'Wood',
-                                             'supplier' => 'Supplier Old',
-                                             'storage_location' => 'Shelf D1',
-                                         ]);
+        $item = Item::create([
+            'depth' => 1,
+            'name' => 'Old Name',
+            'description' => 'Old Description',
+            'quantity' => 3,
+            'size' => 'Small',
+            'material' => 'Wood',
+            'supplier' => 'Supplier Old',
+            'storage_location' => 'Shelf D1',
+        ]);
 
         $updateData = [
             'name' => 'New Name',
@@ -170,9 +177,9 @@ class ItemControllerTest extends TestCase
 
         // Act & Assert
         $this->actingAs($user)
-             ->put(route('items.update', $item), $updateData)
-             ->assertRedirect(route('items.show', $item))
-             ->assertSessionHas('success', 'Предмет обновлён!');
+            ->put(route('items.update', $item), $updateData)
+            ->assertRedirect(route('items.show', $item))
+            ->assertSessionHas('success', 'Обновлено: Предмет');
 
         // Проверка что в базе данные реально обновились
         $this->assertDatabaseHas('items', [
@@ -182,91 +189,95 @@ class ItemControllerTest extends TestCase
             'quantity' => 8,
         ]);
     }
-    public function testDestroyDeletesItem(): void
+
+    public function test_destroy_deletes_item(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin',
-                                        ]);
+            'role' => 'admin',
+        ]);
 
-        $item = \App\Models\Item::create([
-                                             'name' => 'Item To Delete',
-                                             'description' => 'Description',
-                                             'quantity' => 5,
-                                             'size' => 'Medium',
-                                             'material' => 'Steel',
-                                             'supplier' => 'Supplier Delete',
-                                             'storage_location' => 'Shelf E1',
-                                         ]);
+        $item = Item::create([
+            'depth' => 1,
+            'name' => 'Item To Delete',
+            'description' => 'Description',
+            'quantity' => 5,
+            'size' => 'Medium',
+            'material' => 'Steel',
+            'supplier' => 'Supplier Delete',
+            'storage_location' => 'Shelf E1',
+        ]);
 
         // Act & Assert
         $this->actingAs($user)
-             ->delete(route('items.destroy', $item))
-             ->assertRedirect(route('items.index'))
-             ->assertSessionHas('success', 'Предмет удалён!');
+            ->delete(route('items.destroy', $item))
+            ->assertRedirect(route('items.index', ['depth' => 1]))
+            ->assertSessionHas('success', 'Удалено: Предмет');
 
         $this->assertSoftDeleted('items', [
             'id' => $item->id,
         ]);
     }
 
-    public function testDestroyFailsIfItemHasReservationsOrProducts(): void
+    public function test_destroy_fails_if_item_has_reservations_or_products(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin',
-                                        ]);
+            'role' => 'admin',
+        ]);
 
-        $item = \App\Models\Item::create([
-                                             'name' => 'Protected Item',
-                                             'description' => 'Cannot delete',
-                                             'quantity' => 5,
-                                             'size' => 'Small',
-                                             'material' => 'Plastic',
-                                             'supplier' => 'Supplier Protected',
-                                             'storage_location' => 'Shelf F1',
-                                         ]);
+        $item = Item::create([
+            'depth' => 1,
+            'name' => 'Protected Item',
+            'description' => 'Cannot delete',
+            'quantity' => 5,
+            'size' => 'Small',
+            'material' => 'Plastic',
+            'supplier' => 'Supplier Protected',
+            'storage_location' => 'Shelf F1',
+        ]);
 
         $event = Event::factory()->create([
-                                              'user_id' => $user->id,
-                                          ]);
+            'user_id' => $user->id,
+        ]);
 
         Reservation::create([
-                                'item_id' => $item->id,
-                                'event_id' => $event->id,
-                                'quantity' => 1,
-                            ]);
+            'item_id' => $item->id,
+            'event_id' => $event->id,
+            'quantity' => 1,
+        ]);
 
         // Act & Assert
         $this->actingAs($user)
-             ->delete(route('items.destroy', $item))
-             ->assertRedirect()
-             ->assertSessionHas('error', 'Нельзя удалить предмет, который зарезервирован в мероприятии.');
+            ->delete(route('items.destroy', $item))
+            ->assertRedirect()
+            ->assertSessionHas('error', 'Нельзя удалить Предмет, которое зарезервировано в мероприятии.');
 
         $this->assertDatabaseHas('items', [
             'id' => $item->id,
         ]);
     }
-    public function testExportReturnsCsvDownload(): void
+
+    public function test_export_returns_csv_download(): void
     {
         // Arrange
         $user = User::factory()->create([
-                                            'role' => 'admin',
-                                        ]);
+            'role' => 'admin',
+        ]);
 
-        \App\Models\Item::create([
-                                     'name' => 'Exported Item',
-                                     'description' => 'For Export',
-                                     'quantity' => 15,
-                                     'size' => 'Large',
-                                     'material' => 'Aluminum',
-                                     'supplier' => 'Supplier Export',
-                                     'storage_location' => 'Shelf X1',
-                                 ]);
+        Item::create([
+            'name' => 'Exported Item',
+            'description' => 'For Export',
+            'quantity' => 15,
+            'size' => 'Large',
+            'material' => 'Aluminum',
+            'supplier' => 'Supplier Export',
+            'storage_location' => 'Shelf X1',
+        ]);
 
         // Act
         $response = $this->actingAs($user)
-                         ->get(route('items.export'));
+            ->get(route('items.export'));
 
         // Assert
         $response->assertOk();
@@ -276,4 +287,131 @@ class ItemControllerTest extends TestCase
         $this->assertStringContainsString('Exported Item', $response->getContent());
     }
 
+    public function test_store_depth_one_item_attaches_parent_items(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $parentItem = Item::factory()->create([
+            'depth' => 0,
+            'name' => 'Задание с кубиком',
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('items.store'), [
+                'depth' => 1,
+                'name' => 'Поролоновый кубик',
+                'quantity' => 1,
+                'parent_items' => [
+                    $parentItem->id => [
+                        'selected' => 1,
+                        'quantity' => 3,
+                    ],
+                ],
+            ])
+            ->assertRedirect(route('items.index', ['depth' => 1]))
+            ->assertSessionHas('success', 'Создано: Предмет');
+
+        $item = Item::where('name', 'Поролоновый кубик')->firstOrFail();
+
+        $this->assertDatabaseHas('item_subitem', [
+            'item_id' => $parentItem->id,
+            'subitem_id' => $item->id,
+            'quantity' => 3,
+        ]);
+    }
+
+    public function test_update_depth_one_item_syncs_parent_items(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $oldParentItem = Item::factory()->create(['depth' => 0]);
+        $newParentItem = Item::factory()->create(['depth' => 0]);
+        $item = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Крестик-нолик',
+            'quantity' => 1,
+        ]);
+
+        $item->parentItems()->attach($oldParentItem->id, ['quantity' => 1]);
+
+        $this->actingAs($user)
+            ->put(route('items.update', $item), [
+                'name' => 'Крестик-нолик обновленный',
+                'quantity' => 2,
+                'parent_items' => [
+                    $newParentItem->id => [
+                        'selected' => 1,
+                        'quantity' => 4,
+                    ],
+                ],
+            ])
+            ->assertRedirect(route('items.show', $item))
+            ->assertSessionHas('success', 'Обновлено: Предмет');
+
+        $this->assertDatabaseMissing('item_subitem', [
+            'item_id' => $oldParentItem->id,
+            'subitem_id' => $item->id,
+        ]);
+
+        $this->assertDatabaseHas('item_subitem', [
+            'item_id' => $newParentItem->id,
+            'subitem_id' => $item->id,
+            'quantity' => 4,
+        ]);
+    }
+
+    public function test_show_depth_one_item_displays_parent_item_links_with_quantity(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $parentItem = Item::factory()->create([
+            'depth' => 0,
+            'name' => 'Задание для просмотра',
+        ]);
+        $item = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Просматриваемый предмет',
+        ]);
+
+        $item->parentItems()->attach($parentItem->id, ['quantity' => 2]);
+
+        $this->actingAs($user)
+            ->get(route('items.show', $item))
+            ->assertOk()
+            ->assertSee('Задания')
+            ->assertSee($parentItem->name)
+            ->assertSee('href="'.route('items.show', $parentItem).'"', false)
+            ->assertSee('× 2', false);
+    }
+
+    public function test_subitem_search_is_case_insensitive_for_cyrillic(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $item = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Поролоновый Кубик',
+        ]);
+
+        $this->actingAs($user)
+            ->getJson(route('api.items.search-subitems', ['q' => 'кубик']))
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $item->id,
+                'name' => 'Поролоновый Кубик',
+            ]);
+    }
+
+    public function test_parent_item_search_is_case_insensitive_for_cyrillic(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $parentItem = Item::factory()->create([
+            'depth' => 0,
+            'name' => 'Задание Крестики-Нолики',
+        ]);
+
+        $this->actingAs($user)
+            ->getJson(route('api.items.search-parent-items', ['q' => 'крестики']))
+            ->assertOk()
+            ->assertJsonFragment([
+                'id' => $parentItem->id,
+                'name' => 'Задание Крестики-Нолики',
+            ]);
+    }
 }

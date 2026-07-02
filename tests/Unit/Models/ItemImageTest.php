@@ -13,22 +13,22 @@ class ItemImageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFillableAttributes(): void
+    public function test_fillable_attributes(): void
     {
-        $itemImage = new ItemImage();
+        $itemImage = new ItemImage;
 
         $this->assertEquals(
-            ['item_id', 'path'],
+            ['item_id', 'path', 'thumb_path'],
             $itemImage->getFillable()
         );
     }
 
-    public function testItemRelationship(): void
+    public function test_item_relationship(): void
     {
         $item = Item::factory()->create();
         $itemImage = ItemImage::factory()->create([
-                                                      'item_id' => $item->id,
-                                                  ]);
+            'item_id' => $item->id,
+        ]);
 
         $this->assertInstanceOf(Item::class, $itemImage->item);
         $this->assertEquals($item->id, $itemImage->item->id);

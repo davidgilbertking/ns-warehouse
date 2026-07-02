@@ -76,7 +76,7 @@
         }
 
         function renderSearchResults() {
-            const search = document.getElementById('item-search').value.toLowerCase();
+            const search = document.getElementById('item-search').value.toLocaleLowerCase();
             const container = document.getElementById('search-results');
             container.innerHTML = '';
 
@@ -86,7 +86,7 @@
 
             items.forEach(item => {
                 if (selectedItems[item.id]) return;
-                if (!item.name.toLowerCase().includes(search)) return;
+                if (!item.name.toLocaleLowerCase().includes(search)) return;
 
                 const div = document.createElement('div');
                 div.classList.add('mb-2');

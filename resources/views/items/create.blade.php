@@ -22,11 +22,12 @@
                 @include('items.partials.general-fields')
 
                 @if ($depth === 0)
-
                     @include('items.partials.composition-fields')
 
                     <h4 class="mt-4">Для ОП</h4>
-                @include('items.partials.op-fields')
+                    @include('items.partials.op-fields')
+                @else
+                    @include('items.partials.parent-items-fields')
                 @endif
 
                 <h4 class="mt-4">Для реализации</h4>

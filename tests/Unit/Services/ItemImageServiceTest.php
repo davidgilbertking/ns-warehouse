@@ -18,19 +18,12 @@ class ItemImageServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testStoreCreatesItemImage(): void
+    public function test_store_creates_item_image(): void
     {
         // Arrange
         $item = Item::factory()->create();
         $repository = Mockery::mock(ItemImageRepository::class);
         $service = new ItemImageService($repository);
-
-        $repository->shouldReceive('create')
-                   ->once()
-                   ->withArgs(function ($itemArg, $dtoArg) {
-                       return $itemArg instanceof Item && $dtoArg instanceof \App\DTOs\ItemImageDTO;
-                   })
-                   ->andReturn(new ItemImage(['path' => 'path/to/file.jpg']));
 
         // Act
         $image = $service->store($item, 'path/to/file.jpg');
@@ -38,25 +31,27 @@ class ItemImageServiceTest extends TestCase
         // Assert
         $this->assertInstanceOf(ItemImage::class, $image);
         $this->assertEquals('path/to/file.jpg', $image->path);
+        $this->assertNull($image->thumb_path);
+        $this->assertTrue($item->images()->where('path', 'path/to/file.jpg')->exists());
     }
 
-    public function testDestroyDeletesImageFileAndRecord(): void
+    public function test_destroy_deletes_image_file_and_record(): void
     {
         // Arrange
         Storage::fake('public');
 
         $item = Item::factory()->create();
         $image = ItemImage::create([
-                                       'item_id' => $item->id,
-                                       'path' => 'items/test_image.jpg',
-                                   ]);
+            'item_id' => $item->id,
+            'path' => 'items/test_image.jpg',
+        ]);
 
         Storage::disk('public')->put($image->path, 'fake content');
 
         $repository = Mockery::mock(ItemImageRepository::class);
         $repository->shouldReceive('delete')
-                   ->once()
-                   ->with($image);
+            ->once()
+            ->with($image);
 
         $service = new ItemImageService($repository);
 
@@ -67,7 +62,7 @@ class ItemImageServiceTest extends TestCase
         Storage::disk('public')->assertMissing($image->path);
     }
 
-    public function testUploadImagesCreatesMultipleItemImages(): void
+    public function test_upload_images_creates_multiple_item_images(): void
     {
         // Arrange
         Storage::fake('public');

@@ -40,6 +40,7 @@ readonly class ItemStoreDTO
         private int $depth = 0,
         private ?array $subitemIds = [],
         private ?array $subitemsWithQuantities = [],
+        private ?array $parentItemsWithQuantities = [],
 
     ) {}
 
@@ -79,6 +80,7 @@ readonly class ItemStoreDTO
             $data['depth'] ?? 0,
             $data['subitem_ids'] ?? [],
             $data['subitems'] ?? [],
+            $data['parent_items'] ?? [],
 
         );
     }
@@ -144,9 +146,14 @@ readonly class ItemStoreDTO
     {
         return $this->subitemIds ?? [];
     }
+
     public function getSubitemsWithQuantities(): array
     {
         return $this->subitemsWithQuantities ?? [];
     }
 
+    public function getParentItemsWithQuantities(): array
+    {
+        return $this->parentItemsWithQuantities ?? [];
+    }
 }
