@@ -64,6 +64,10 @@ class ItemRepository
             );
         }
 
+        if ($depth === 1 && $filter->withoutParentItems()) {
+            $items = $items->filter(fn (Item $item): bool => $item->parentItems->isEmpty());
+        }
+
         return $items->values();
     }
 

@@ -377,6 +377,28 @@ class ItemRepositoryTest extends TestCase
         $this->assertTrue($item->relationLoaded('parentItems'));
     }
 
+    public function test_paginate_with_filters_can_show_only_items_without_parent_items(): void
+    {
+        $repository = new ItemRepository;
+        $parentItem = Item::factory()->create(['depth' => 0]);
+        $linkedItem = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Linked item',
+        ]);
+        $unlinkedItem = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Unlinked item',
+        ]);
+
+        $linkedItem->parentItems()->attach($parentItem->id, ['quantity' => 1]);
+
+        $results = $repository->paginateWithFilters(new ItemFilterDTO(withoutParentItems: true), 10, 1);
+
+        $this->assertTrue(collect($results->items())->contains('id', $unlinkedItem->id));
+        $this->assertFalse(collect($results->items())->contains('id', $linkedItem->id));
+        $this->assertSame(1, $results->total());
+    }
+
     public function test_get_available_quantity_for_item_calculates_correctly(): void
     {
         // Arrange

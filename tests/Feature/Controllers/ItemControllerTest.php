@@ -452,4 +452,32 @@ class ItemControllerTest extends TestCase
             ->assertDontSee('<th>Задания</th>', false)
             ->assertSee('Кол-во');
     }
+
+    public function test_depth_one_index_can_filter_items_without_parent_items(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $parentItem = Item::factory()->create(['depth' => 0]);
+        $linkedItem = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Привязанный предмет',
+        ]);
+        $unlinkedItem = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Непривязанный предмет',
+        ]);
+
+        $linkedItem->parentItems()->attach($parentItem->id, ['quantity' => 1]);
+
+        $this->actingAs($user)
+            ->get(route('items.index', [
+                'depth' => 1,
+                'without_parent_items' => 1,
+            ]))
+            ->assertOk()
+            ->assertSee('Без заданий')
+            ->assertSee('id="without_parent_items"', false)
+            ->assertSee('checked', false)
+            ->assertSee($unlinkedItem->name)
+            ->assertDontSee($linkedItem->name);
+    }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Unit\Services;
 
 use App\DTOs\ItemFilterDTO;
-use App\Models\Item;
 use App\Models\Event;
+use App\Models\Item;
 use App\Models\Reservation;
 use App\Repositories\ItemRepository;
 use App\Services\ItemExportService;
@@ -17,19 +17,19 @@ class ItemExportServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testExportGeneratesCsvWithoutDateFilters(): void
+    public function test_export_generates_csv_without_date_filters(): void
     {
         // Arrange
-        $repository = new ItemRepository();
+        $repository = new ItemRepository;
         $service = new ItemExportService($repository);
 
         $item = Item::factory()->create([
-                                            'name' => 'Test Item',
-                                            'description' => 'Test Description',
-                                            'quantity' => 10,
-                                        ]);
+            'name' => 'Test Item',
+            'description' => 'Test Description',
+            'quantity' => 10,
+        ]);
 
-        $filter = new ItemFilterDTO();
+        $filter = new ItemFilterDTO;
 
         // Act
         $csvContent = $service->export($filter);
@@ -45,28 +45,28 @@ class ItemExportServiceTest extends TestCase
 
     }
 
-    public function testExportGeneratesCsvWithAvailableQuantity(): void
+    public function test_export_generates_csv_with_available_quantity(): void
     {
         // Arrange
-        $repository = new ItemRepository();
+        $repository = new ItemRepository;
         $service = new ItemExportService($repository);
 
         $item = Item::factory()->create([
-                                            'name' => 'Reserved Item',
-                                            'description' => 'Reserved Description',
-                                            'quantity' => 10,
-                                        ]);
+            'name' => 'Reserved Item',
+            'description' => 'Reserved Description',
+            'quantity' => 10,
+        ]);
 
         $event = Event::factory()->create([
-                                              'start_date' => now()->addDays(1),
-                                              'end_date' => now()->addDays(2),
-                                          ]);
+            'start_date' => now()->addDays(1),
+            'end_date' => now()->addDays(2),
+        ]);
 
         Reservation::create([
-                                'item_id' => $item->id,
-                                'event_id' => $event->id,
-                                'quantity' => 3,
-                            ]);
+            'item_id' => $item->id,
+            'event_id' => $event->id,
+            'quantity' => 3,
+        ]);
 
         $filter = new ItemFilterDTO(
             availableFrom: now()->toDateString(),
@@ -79,5 +79,25 @@ class ItemExportServiceTest extends TestCase
         // Assert
         $this->assertStringContainsString('Reserved Item', $csvContent);
         $this->assertStringContainsString('7', $csvContent); // 10 - 3 = 7 available
+    }
+
+    public function test_export_uses_depth_from_filter(): void
+    {
+        $repository = new ItemRepository;
+        $service = new ItemExportService($repository);
+
+        Item::factory()->create([
+            'depth' => 0,
+            'name' => 'Task should not be exported',
+        ]);
+        Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Item should be exported',
+        ]);
+
+        $csvContent = $service->export(new ItemFilterDTO(depth: 1));
+
+        $this->assertStringContainsString('Item should be exported', $csvContent);
+        $this->assertStringNotContainsString('Task should not be exported', $csvContent);
     }
 }

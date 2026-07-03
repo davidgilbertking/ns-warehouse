@@ -15,7 +15,7 @@ class ItemExportService
 
     public function export(ItemFilterDTO $filter): string
     {
-        $items = $this->repository->getForExport($filter);
+        $items = $this->repository->getForExport($filter, $filter->getDepth() ?? 0);
 
         if ($filter->getAvailableFrom() && $filter->getAvailableTo()) {
             foreach ($items as $item) {
@@ -24,10 +24,10 @@ class ItemExportService
                 foreach ($item->reservations as $reservation) {
                     $event = $reservation->event;
                     if ($event && (
-                            ($event->start_date >= $filter->getAvailableFrom() && $event->start_date <= $filter->getAvailableTo()) ||
-                            ($event->end_date >= $filter->getAvailableFrom() && $event->end_date <= $filter->getAvailableTo()) ||
-                            ($event->start_date <= $filter->getAvailableFrom() && $event->end_date >= $filter->getAvailableTo())
-                        )) {
+                        ($event->start_date >= $filter->getAvailableFrom() && $event->start_date <= $filter->getAvailableTo()) ||
+                        ($event->end_date >= $filter->getAvailableFrom() && $event->end_date <= $filter->getAvailableTo()) ||
+                        ($event->start_date <= $filter->getAvailableFrom() && $event->end_date >= $filter->getAvailableTo())
+                    )) {
                         $reserved += $reservation->quantity;
                     }
                 }

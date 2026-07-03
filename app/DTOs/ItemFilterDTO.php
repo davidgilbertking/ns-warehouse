@@ -13,6 +13,7 @@ readonly class ItemFilterDTO
         private ?string $product = null,
         private ?int $depth = null,
         private ?string $storagePlace = null,
+        private bool $withoutParentItems = false,
     ) {}
 
     public static function fromArray(array $data): self
@@ -22,8 +23,9 @@ readonly class ItemFilterDTO
             $data['available_from'] ?? null,
             $data['available_to'] ?? null,
             $data['product'] ?? null,
-            isset($data['depth']) ? (int)$data['depth'] : null,
+            isset($data['depth']) ? (int) $data['depth'] : null,
             $data['storage_place'] ?? null,
+            filter_var($data['without_parent_items'] ?? false, FILTER_VALIDATE_BOOLEAN),
         );
     }
 
@@ -55,5 +57,10 @@ readonly class ItemFilterDTO
     public function getStoragePlace(): ?string
     {
         return $this->storagePlace;
+    }
+
+    public function withoutParentItems(): bool
+    {
+        return $this->withoutParentItems;
     }
 }

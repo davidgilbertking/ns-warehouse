@@ -50,12 +50,27 @@
                     <input type="text" name="storage_place" class="form-control" placeholder="Поиск по месту..."
                            value="{{ request('storage_place') }}">
                 </div>
+                @if ($depth === 1)
+                    <div class="col-12 col-md-4 d-flex align-items-center">
+                        <div class="form-check">
+                            <input type="checkbox"
+                                   name="without_parent_items"
+                                   id="without_parent_items"
+                                   value="1"
+                                   class="form-check-input"
+                                   @checked(request()->boolean('without_parent_items'))>
+                            <label for="without_parent_items" class="form-check-label">
+                                Без заданий
+                            </label>
+                        </div>
+                    </div>
+                @endif
             </div>
         </form>
     </div>
 
     @can('create', App\Models\Item::class)
-        <a href="{{ route('items.export', request()->only('search', 'available_from', 'available_to', 'product', 'storage_place')) }}"
+        <a href="{{ route('items.export', request()->only('depth', 'search', 'available_from', 'available_to', 'product', 'storage_place', 'without_parent_items')) }}"
            class="btn btn-info mb-3">Экспортировать список в CSV</a>
     @endcan
     @if ($items->isEmpty())
