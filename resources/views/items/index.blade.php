@@ -21,50 +21,46 @@
     <div class="mb-3">
         <form method="GET" action="{{ route('items.index') }}">
             <input type="hidden" name="depth" value="{{ $depth }}">
-            <div class="row g-2">
-                <div class="col-12 col-md-6">
+            <div class="item-filter-layout">
+                <div class="item-filter-fields">
                     <input type="text" name="search" class="form-control" placeholder="Поиск по тексту..."
                            value="{{ request('search') }}">
-                </div>
-                <div class="col-6 col-md-2">
+
+                    {{--
                     <input type="text" id="available_from" name="available_from" class="form-control datepicker"
                            placeholder="От"
                            value="{{ request('available_from') }}" autocomplete="off">
-                </div>
-                <div class="col-6 col-md-2">
                     <input type="text" id="available_to" name="available_to" class="form-control datepicker"
                            placeholder="До"
                            value="{{ request('available_to') }}" autocomplete="off">
-                </div>
-                <div class="col-6 col-md-1 d-grid">
-                    <a href="{{ route('items.index', ['depth' => $depth]) }}" class="btn btn-secondary">Очистить</a>
-                </div>
-                <div class="col-6 col-md-1 d-grid">
-                    <button type="submit" class="btn btn-primary">Искать</button>
-                </div>
-                <div class="col-12 col-md-3">
+                    --}}
+
                     <input type="text" name="product" class="form-control" placeholder="Поиск по тэгам..."
                            value="{{ request('product') }}">
-                </div>
-                <div class="col-12 col-md-3">
+
                     <input type="text" name="storage_place" class="form-control" placeholder="Поиск по месту..."
                            value="{{ request('storage_place') }}">
-                </div>
-                @if ($depth === 1)
-                    <div class="col-12 col-md-4 d-flex align-items-center">
-                        <div class="form-check">
-                            <input type="checkbox"
-                                   name="without_parent_items"
-                                   id="without_parent_items"
-                                   value="1"
-                                   class="form-check-input"
-                                   @checked(request()->boolean('without_parent_items'))>
-                            <label for="without_parent_items" class="form-check-label">
-                                Без заданий
-                            </label>
+
+                    @if ($depth === 1)
+                        <div class="item-filter-checkbox">
+                            <div class="form-check mb-0">
+                                <input type="checkbox"
+                                       name="without_parent_items"
+                                       id="without_parent_items"
+                                       value="1"
+                                       class="form-check-input"
+                                       @checked(request()->boolean('without_parent_items'))>
+                                <label for="without_parent_items" class="form-check-label">
+                                    Без заданий
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
+                <div class="item-filter-actions">
+                    <a href="{{ route('items.index', ['depth' => $depth]) }}" class="btn btn-secondary">Очистить</a>
+                    <button type="submit" class="btn btn-primary">Искать</button>
+                </div>
             </div>
         </form>
     </div>
@@ -160,7 +156,7 @@
                                     @can('delete', $item)
                                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#deleteModal"
-                                                data-action="{{ route('items.destroy', $item) }}">
+                                                data-action="{{ route('items.destroy', ['item' => $item] + request()->query()) }}">
                                             Удалить
                                         </button>
                                     @endcan
@@ -176,11 +172,54 @@
     @endif
 
     @include('partials.delete-modal')
-    @include('partials.date-error-modal')
+    {{-- @include('partials.date-error-modal') --}}
 
 @endsection
 @section('styles')
     <style>
+        .item-filter-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.5rem;
+            align-items: start;
+        }
+
+        .item-filter-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+            gap: 0.5rem;
+        }
+
+        .item-filter-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .item-filter-actions .btn {
+            min-width: 5.5rem;
+        }
+
+        .item-filter-checkbox {
+            display: flex;
+            align-items: center;
+            min-height: calc(1.5em + 0.75rem + 2px);
+        }
+
+        @media (max-width: 991.98px) {
+            .item-filter-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .item-filter-actions {
+                justify-content: stretch;
+            }
+
+            .item-filter-actions .btn {
+                flex: 1;
+            }
+        }
+
         .items-catalog-table {
             table-layout: fixed;
         }
@@ -253,6 +292,7 @@
                 form.action = action;
             });
 
+            {{--
             // Проверка диапазона дат при отправке формы фильтра предметов
             const itemFilterForm = document.querySelector('form[action="{{ route('items.index') }}"]');
             if (itemFilterForm) {
@@ -267,6 +307,7 @@
                     }
                 });
             }
+            --}}
         });
     </script>
 @endsection

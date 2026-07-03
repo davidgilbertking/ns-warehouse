@@ -112,8 +112,9 @@ class ItemController extends Controller
         return redirect()->route('items.show', $item)->with('success', "Обновлено: {$entityName}");
     }
 
-    public function destroy(Item $item)
+    public function destroy(Request $request, Item $item)
     {
+        $depth = $item->depth;
         $entityName = $item->depth === 1 ? 'Предмет' : 'Задание';
 
         if ($item->activeReservations()->exists()) {
@@ -135,7 +136,10 @@ class ItemController extends Controller
 
         $this->service->deleteItem($item);
 
-        return redirect()->route('items.index', ['depth' => $item->depth])->with('success', "Удалено: {$entityName}");
+        $redirectParams = $request->query();
+        $redirectParams['depth'] = $depth;
+
+        return redirect()->route('items.index', $redirectParams)->with('success', "Удалено: {$entityName}");
     }
 
     public function export(Request $request)

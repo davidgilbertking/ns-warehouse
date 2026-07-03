@@ -27,6 +27,25 @@ class ItemControllerTest extends TestCase
             ->assertViewIs('items.index');
     }
 
+    public function test_items_and_tasks_index_do_not_render_date_filters(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('items.index', ['depth' => 0]))
+            ->assertOk()
+            ->assertDontSee('id="available_from"', false)
+            ->assertDontSee('id="available_to"', false)
+            ->assertDontSee('dateErrorModal');
+
+        $this->actingAs($user)
+            ->get(route('items.index', ['depth' => 1]))
+            ->assertOk()
+            ->assertDontSee('id="available_from"', false)
+            ->assertDontSee('id="available_to"', false)
+            ->assertDontSee('dateErrorModal');
+    }
+
     public function test_create_returns_successful_response_for_authorized_user(): void
     {
         // Arrange
@@ -217,6 +236,59 @@ class ItemControllerTest extends TestCase
         $this->assertSoftDeleted('items', [
             'id' => $item->id,
         ]);
+    }
+
+    public function test_destroy_redirect_preserves_current_filters(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $item = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Filtered Item To Delete',
+        ]);
+        $filters = [
+            'depth' => 1,
+            'search' => 'Filtered',
+            'storage_place' => 'Shelf E1',
+            'without_parent_items' => 1,
+            'page' => 2,
+        ];
+
+        $this->actingAs($user)
+            ->delete(route('items.destroy', ['item' => $item] + $filters))
+            ->assertRedirect(route('items.index', $filters))
+            ->assertSessionHas('success', 'Удалено: Предмет');
+
+        $this->assertSoftDeleted('items', [
+            'id' => $item->id,
+        ]);
+    }
+
+    public function test_index_delete_action_preserves_current_filters(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'admin',
+        ]);
+        $item = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Filtered Delete Button Item',
+            'storage_place' => 'Shelf E1',
+        ]);
+        $filters = [
+            'depth' => 1,
+            'search' => 'Filtered Delete',
+            'storage_place' => 'Shelf E1',
+            'without_parent_items' => 1,
+        ];
+
+        $expectedAction = route('items.destroy', ['item' => $item] + $filters);
+
+        $this->actingAs($user)
+            ->get(route('items.index', $filters))
+            ->assertOk()
+            ->assertSee('data-action="'.e($expectedAction).'"', false);
     }
 
     public function test_destroy_fails_if_item_has_reservations_or_products(): void
