@@ -64,16 +64,35 @@
         </div>
     @else
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered items-catalog-table {{ $depth === 1 ? 'items-catalog-table-items' : 'items-catalog-table-tasks' }}">
+                <colgroup>
+                    <col class="catalog-col-name">
+                    <col class="catalog-col-description">
+                    <col class="catalog-col-place">
+                    <col class="catalog-col-products">
+                    @if ($depth === 1)
+                        <col class="catalog-col-parent-items">
+                    @endif
+                    <col class="catalog-col-quantity">
+                    @if (request()->filled('available_from') && request()->filled('available_to'))
+                        <col class="catalog-col-available-quantity">
+                    @endif
+                    @if (auth()->user() && auth()->user()->isAdmin())
+                        <col class="catalog-col-actions">
+                    @endif
+                </colgroup>
                 <thead>
                 <tr>
                     <th>Название</th>
                     <th>Описание</th>
                     <th>Место</th>
                     <th>Тэги</th>
-                    <th>Количество всего</th>
+                    @if ($depth === 1)
+                        <th>Задания</th>
+                    @endif
+                    <th>Кол-во</th>
                     @if (request()->filled('available_from') && request()->filled('available_to'))
-                        <th>Количество доступно</th>
+                        <th>Доступно</th>
                     @endif
                     @if (auth()->user() && auth()->user()->isAdmin())
                         <th>Действия</th>
@@ -99,6 +118,19 @@
                                     —
                                 @endif
                             </td>
+                            @if ($depth === 1)
+                                <td>
+                                    @if ($item->parentItems->isNotEmpty())
+                                        @foreach ($item->parentItems as $parentItem)
+                                            <a href="{{ route('items.show', $parentItem) }}" class="catalog-parent-item-link">
+                                                {{ $parentItem->name }}
+                                            </a>
+                                        @endforeach
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                            @endif
                             <td>{{ $item->quantity }}</td>
 
                             @if (request()->filled('available_from') && request()->filled('available_to'))
@@ -131,6 +163,69 @@
     @include('partials.delete-modal')
     @include('partials.date-error-modal')
 
+@endsection
+@section('styles')
+    <style>
+        .items-catalog-table {
+            table-layout: fixed;
+        }
+
+        .items-catalog-table th,
+        .items-catalog-table td {
+            vertical-align: top;
+            overflow-wrap: anywhere;
+        }
+
+        .items-catalog-table .catalog-parent-item-link {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .items-catalog-table .catalog-col-quantity,
+        .items-catalog-table .catalog-col-available-quantity {
+            width: 6rem;
+        }
+
+        .items-catalog-table .catalog-col-actions {
+            width: 10rem;
+        }
+
+        .items-catalog-table-items .catalog-col-name {
+            width: 16%;
+        }
+
+        .items-catalog-table-items .catalog-col-description {
+            width: 31%;
+        }
+
+        .items-catalog-table-items .catalog-col-place {
+            width: 8%;
+        }
+
+        .items-catalog-table-items .catalog-col-products {
+            width: 10%;
+        }
+
+        .items-catalog-table-items .catalog-col-parent-items {
+            width: 16%;
+        }
+
+        .items-catalog-table-tasks .catalog-col-name {
+            width: 17%;
+        }
+
+        .items-catalog-table-tasks .catalog-col-description {
+            width: 43%;
+        }
+
+        .items-catalog-table-tasks .catalog-col-place {
+            width: 9%;
+        }
+
+        .items-catalog-table-tasks .catalog-col-products {
+            width: 13%;
+        }
+    </style>
 @endsection
 @section('scripts')
     <script>

@@ -414,4 +414,42 @@ class ItemControllerTest extends TestCase
                 'name' => 'Задание Крестики-Нолики',
             ]);
     }
+
+    public function test_depth_one_index_displays_parent_item_links(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $parentItem = Item::factory()->create([
+            'depth' => 0,
+            'name' => 'Задание со ссылкой',
+        ]);
+        $item = Item::factory()->create([
+            'depth' => 1,
+            'name' => 'Предмет в задании',
+        ]);
+
+        $item->parentItems()->attach($parentItem->id, ['quantity' => 1]);
+
+        $this->actingAs($user)
+            ->get(route('items.index', ['depth' => 1]))
+            ->assertOk()
+            ->assertSee('Задания')
+            ->assertSee('Кол-во')
+            ->assertSee($parentItem->name)
+            ->assertSee('href="'.route('items.show', $parentItem).'"', false);
+    }
+
+    public function test_depth_zero_index_does_not_display_parent_items_column(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        Item::factory()->create([
+            'depth' => 0,
+            'name' => 'Задание без колонки',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('items.index'))
+            ->assertOk()
+            ->assertDontSee('<th>Задания</th>', false)
+            ->assertSee('Кол-во');
+    }
 }

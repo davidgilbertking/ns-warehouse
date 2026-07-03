@@ -41,7 +41,7 @@ class ItemRepository
 
     private function getFilteredItems(ItemFilterDTO $filter, int $depth): Collection
     {
-        $items = Item::with(['products', 'reservations.event'])
+        $items = Item::with(['parentItems', 'products', 'reservations.event'])
             ->where('depth', $depth)
             ->orderBy('name', 'asc')
             ->get();

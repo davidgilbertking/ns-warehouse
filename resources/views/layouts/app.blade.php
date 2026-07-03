@@ -84,6 +84,7 @@
             margin-top: 2px;
         }
     </style>
+    @yield('styles')
 </head>
 <body>
 <nav class="navbar navbar-expand-lg mb-4" style="background-color: var(--bs-body-bg);">

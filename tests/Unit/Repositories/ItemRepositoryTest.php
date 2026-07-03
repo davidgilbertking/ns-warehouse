@@ -365,6 +365,18 @@ class ItemRepositoryTest extends TestCase
         $this->assertTrue($foundItem->relationLoaded('reservations'));
     }
 
+    public function test_paginate_with_filters_loads_parent_items_relation(): void
+    {
+        $repository = new ItemRepository;
+        Item::factory()->create(['depth' => 1]);
+
+        $paginator = $repository->paginateWithFilters(new ItemFilterDTO, 10, 1);
+        $item = collect($paginator->items())->first();
+
+        $this->assertInstanceOf(Item::class, $item);
+        $this->assertTrue($item->relationLoaded('parentItems'));
+    }
+
     public function test_get_available_quantity_for_item_calculates_correctly(): void
     {
         // Arrange
