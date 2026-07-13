@@ -74,7 +74,84 @@
             Нет доступных предметов для выбранных условий.
         </div>
     @else
-        <div class="table-responsive">
+        <div class="items-catalog-mobile d-md-none">
+            @foreach ($items as $item)
+                @if (!request()->filled('available_from') || !request()->filled('available_to') || $item->available_quantity > 0)
+                    <article class="items-catalog-card">
+                        <div class="items-catalog-card-header">
+                            <a href="{{ route('items.show', $item) }}" class="items-catalog-card-title">
+                                {{ $item->name }}
+                            </a>
+                            <span class="badge text-bg-secondary items-catalog-card-quantity">
+                                {{ $item->quantity }} шт.
+                            </span>
+                        </div>
+
+                        <div class="items-catalog-card-row">
+                            <span class="items-catalog-card-label">Описание</span>
+                            <span class="items-catalog-card-value">{{ $item->description ?: '—' }}</span>
+                        </div>
+
+                        <div class="items-catalog-card-row">
+                            <span class="items-catalog-card-label">Место</span>
+                            <span class="items-catalog-card-value">{{ $item->storage_place ?: '—' }}</span>
+                        </div>
+
+                        <div class="items-catalog-card-row">
+                            <span class="items-catalog-card-label">Тэги</span>
+                            <span class="items-catalog-card-value">
+                                @if ($item->products->isNotEmpty())
+                                    {{ $item->products->pluck('name')->implode(', ') }}
+                                @else
+                                    —
+                                @endif
+                            </span>
+                        </div>
+
+                        @if ($depth === 1)
+                            <div class="items-catalog-card-row">
+                                <span class="items-catalog-card-label">Задания</span>
+                                <span class="items-catalog-card-value">
+                                    @if ($item->parentItems->isNotEmpty())
+                                        @foreach ($item->parentItems as $parentItem)
+                                            <a href="{{ route('items.show', $parentItem) }}" class="catalog-parent-item-link">
+                                                {{ $parentItem->name }}
+                                            </a>
+                                        @endforeach
+                                    @else
+                                        —
+                                    @endif
+                                </span>
+                            </div>
+                        @endif
+
+                        @if (request()->filled('available_from') && request()->filled('available_to'))
+                            <div class="items-catalog-card-row">
+                                <span class="items-catalog-card-label">Доступно</span>
+                                <span class="items-catalog-card-value">{{ $item->available_quantity }}</span>
+                            </div>
+                        @endif
+
+                        @canany(['update', 'delete'], $item)
+                            <div class="items-catalog-card-actions">
+                                @can('update', $item)
+                                    <a href="{{ route('items.edit', $item) }}" class="btn btn-warning btn-sm">Редактировать</a>
+                                @endcan
+                                @can('delete', $item)
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            data-action="{{ route('items.destroy', ['item' => $item] + request()->query()) }}">
+                                        Удалить
+                                    </button>
+                                @endcan
+                            </div>
+                        @endcanany
+                    </article>
+                @endif
+            @endforeach
+        </div>
+
+        <div class="table-responsive d-none d-md-block">
             <table class="table table-bordered items-catalog-table {{ $depth === 1 ? 'items-catalog-table-items' : 'items-catalog-table-tasks' }}">
                 <colgroup>
                     <col class="catalog-col-name">
@@ -206,6 +283,73 @@
             min-height: calc(1.5em + 0.75rem + 2px);
         }
 
+        .items-catalog-mobile {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .items-catalog-card {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.375rem;
+            background: var(--bs-body-bg);
+            padding: 0.75rem;
+        }
+
+        .items-catalog-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .items-catalog-card-title {
+            min-width: 0;
+            font-weight: 600;
+            overflow-wrap: break-word;
+        }
+
+        .items-catalog-card-quantity {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .items-catalog-card-row {
+            display: grid;
+            grid-template-columns: 6rem minmax(0, 1fr);
+            gap: 0.5rem;
+            padding: 0.45rem 0;
+            border-top: 1px solid var(--bs-border-color);
+        }
+
+        .items-catalog-card-label {
+            color: var(--bs-secondary-color);
+            font-size: 0.875rem;
+        }
+
+        .items-catalog-card-value {
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+
+        .items-catalog-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--bs-border-color);
+        }
+
+        .items-catalog-card-actions .btn {
+            flex: 1 1 8rem;
+            white-space: nowrap;
+        }
+
+        .items-catalog-card .catalog-parent-item-link {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
         @media (max-width: 991.98px) {
             .item-filter-layout {
                 grid-template-columns: 1fr;
@@ -217,6 +361,13 @@
 
             .item-filter-actions .btn {
                 flex: 1;
+            }
+        }
+
+        @media (max-width: 374.98px) {
+            .items-catalog-card-row {
+                grid-template-columns: 1fr;
+                gap: 0.125rem;
             }
         }
 
